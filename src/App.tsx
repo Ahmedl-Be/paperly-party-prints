@@ -10,14 +10,13 @@ import CardEditor from "./pages/CardEditor";
 import NotFound from "./pages/NotFound";
 
 const App = () => {
-  // Create a client inside the component function
-  const [queryClient] = React.useState(() => new QueryClient());
+  const queryClient = React.useState(() => new QueryClient())[0];
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Sonner />
+        <Sonner position="bottom-right" />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
