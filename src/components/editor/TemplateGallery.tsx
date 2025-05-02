@@ -19,6 +19,18 @@ const templates: Template[] = [
     }
   },
   {
+    id: "wedding-2",
+    name: "Rustic Wedding",
+    previewUrl: "",
+    category: "wedding",
+    backgroundColor: "#FEF7CD",
+    textColor: "#816B56",
+    defaultText: {
+      title: "Join Us As We Say I Do",
+      message: "Please celebrate with us\n\nDate: July 8, 2025\nTime: 4:00 PM\nLocation: Mountain View Barn"
+    }
+  },
+  {
     id: "birthday-1",
     name: "Birthday Bash",
     previewUrl: "",
@@ -28,6 +40,18 @@ const templates: Template[] = [
     defaultText: {
       title: "Birthday Party!",
       message: "Come celebrate with us!\n\nDate: August 10, 2025\nTime: 6:00 PM\nLocation: Fun House"
+    }
+  },
+  {
+    id: "birthday-2",
+    name: "Elegant Birthday",
+    previewUrl: "",
+    category: "birthday",
+    backgroundColor: "#E5DEFF",
+    textColor: "#4C3889",
+    defaultText: {
+      title: "Celebrate Another Year",
+      message: "Please join us for a special evening\n\nDate: September 5, 2025\nTime: 7:00 PM\nLocation: Rooftop Lounge"
     }
   },
   {
@@ -43,6 +67,18 @@ const templates: Template[] = [
     }
   },
   {
+    id: "corporate-2",
+    name: "Product Launch",
+    previewUrl: "",
+    category: "corporate",
+    backgroundColor: "#D3E4FD",
+    textColor: "#2C4975",
+    defaultText: {
+      title: "Introducing Our New Product",
+      message: "Join us for the unveiling\n\nDate: October 15, 2025\nTime: 10:00 AM\nLocation: Innovation Center"
+    }
+  },
+  {
     id: "baby-1",
     name: "Baby Shower",
     previewUrl: "",
@@ -52,6 +88,18 @@ const templates: Template[] = [
     defaultText: {
       title: "Baby Shower",
       message: "Join us as we celebrate the upcoming arrival of our little one\n\nDate: July 5, 2025\nTime: 11:00 AM\nLocation: Community Center"
+    }
+  },
+  {
+    id: "baby-2",
+    name: "Baby Sprinkle",
+    previewUrl: "",
+    category: "baby",
+    backgroundColor: "#FFDEE2",
+    textColor: "#8E4155",
+    defaultText: {
+      title: "A Little Sprinkle",
+      message: "Before the baby comes, let's shower mom with love\n\nDate: June 28, 2025\nTime: 1:00 PM\nLocation: Sunset Cafe"
     }
   },
   {
@@ -67,6 +115,18 @@ const templates: Template[] = [
     }
   },
   {
+    id: "graduation-2",
+    name: "Academic Achievement",
+    previewUrl: "",
+    category: "graduation",
+    backgroundColor: "#F2FCE2",
+    textColor: "#445D29",
+    defaultText: {
+      title: "Celebrating Academic Excellence",
+      message: "Honoring the graduation of\n\nName: John Smith\nDate: June 2, 2025\nTime: 2:00 PM\nLocation: University Garden"
+    }
+  },
+  {
     id: "holiday-1",
     name: "Holiday Party",
     previewUrl: "",
@@ -76,6 +136,18 @@ const templates: Template[] = [
     defaultText: {
       title: "Holiday Party",
       message: "Join us for a festive celebration\n\nDate: December 15, 2025\nTime: 7:00 PM\nLocation: Winter Wonderland"
+    }
+  },
+  {
+    id: "holiday-2",
+    name: "New Year's Eve",
+    previewUrl: "",
+    category: "holiday",
+    backgroundColor: "#E5DEFF",
+    textColor: "#333333",
+    defaultText: {
+      title: "Ring in the New Year",
+      message: "Join us as we welcome 2026!\n\nDate: December 31, 2025\nTime: 9:00 PM\nLocation: Skyline Lounge"
     }
   }
 ];
@@ -98,43 +170,48 @@ const TemplateGallery: React.FC<TemplateGalleryProps> = ({ onSelectTemplate }) =
   return (
     <div>
       <Tabs defaultValue="all">
-        <TabsList className="mb-4 flex overflow-auto">
+        <TabsList className="mb-6 flex overflow-auto p-1 bg-gray-100 rounded-lg">
           {categories.map((category) => (
-            <TabsTrigger key={category.id} value={category.id}>
+            <TabsTrigger 
+              key={category.id} 
+              value={category.id}
+              className="data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:shadow-sm px-4 py-2"
+            >
               {category.label}
             </TabsTrigger>
           ))}
         </TabsList>
         
         {categories.map((category) => (
-          <TabsContent key={category.id} value={category.id}>
-            <ScrollArea className="h-[400px] pr-4">
-              <div className="grid grid-cols-2 gap-3">
+          <TabsContent key={category.id} value={category.id} className="animate-fade-in">
+            <ScrollArea className="h-[500px] pr-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {templates
                   .filter(t => category.id === "all" || t.category === category.id)
                   .map((template) => (
                     <div 
                       key={template.id}
                       onClick={() => onSelectTemplate(template)}
-                      className="cursor-pointer border rounded-md overflow-hidden transition-all hover:border-purple-500 hover:shadow-md"
+                      className="cursor-pointer border rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-purple-300 group"
                     >
                       {/* Template preview */}
                       <div 
-                        className="aspect-[5/7] p-4 flex flex-col items-center justify-center"
+                        className="aspect-[5/7] p-5 flex flex-col items-center justify-center"
                         style={{ 
                           backgroundColor: template.backgroundColor,
                           color: template.textColor
                         }}
                       >
                         <div className="text-center">
-                          <h4 className="text-sm font-semibold">{template.defaultText.title}</h4>
-                          <p className="text-xs mt-1 line-clamp-3">{template.defaultText.message}</p>
+                          <h4 className="text-sm font-semibold mb-2">{template.defaultText.title}</h4>
+                          <p className="text-xs mt-1 line-clamp-4 opacity-90">{template.defaultText.message}</p>
                         </div>
                       </div>
                       
                       {/* Template name */}
-                      <div className="bg-white p-2 text-center">
-                        <p className="text-xs font-medium">{template.name}</p>
+                      <div className="bg-white p-3 text-center border-t">
+                        <p className="text-sm font-medium group-hover:text-purple-700 transition-colors">{template.name}</p>
+                        <p className="text-xs text-gray-500 capitalize">{template.category}</p>
                       </div>
                     </div>
                   ))

@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import CardEditor from "./pages/CardEditor";
+import Templates from "./pages/Templates";
 import NotFound from "./pages/NotFound";
 
 const App = () => {
@@ -21,7 +22,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/create" element={<CardEditor />} />
-            <Route path="/templates" element={<CardEditor />} />
+            <Route path="/templates" element={<Templates />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
