@@ -10,6 +10,7 @@ import CardEditor from "./pages/CardEditor";
 import Templates from "./pages/Templates";
 import Pricing from "./pages/Pricing";
 import Contact from "./pages/Contact";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const App = () => {
@@ -28,6 +29,7 @@ const App = () => {
             <Route path="/templates" element={<Templates />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/auth" element={<Auth />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

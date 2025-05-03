@@ -1,10 +1,9 @@
-
 import React from "react";
 import type { Template } from "@/pages/CardEditor";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
-// Sample template data
+// Enhanced template data with more colors and emotional elements
 const templates: Template[] = [
   {
     id: "wedding-1",
@@ -31,6 +30,18 @@ const templates: Template[] = [
     }
   },
   {
+    id: "wedding-3",
+    name: "Love Story",
+    previewUrl: "",
+    category: "wedding",
+    backgroundColor: "#FFDEE2",
+    textColor: "#C42847",
+    defaultText: {
+      title: "Two Hearts, One Love",
+      message: "After years of adventure together\nwe're finally tying the knot!\n\nDate: August 12, 2025\nTime: 3:30 PM\nLocation: Sunset Beach Resort"
+    }
+  },
+  {
     id: "birthday-1",
     name: "Birthday Bash",
     previewUrl: "",
@@ -52,6 +63,18 @@ const templates: Template[] = [
     defaultText: {
       title: "Celebrate Another Year",
       message: "Please join us for a special evening\n\nDate: September 5, 2025\nTime: 7:00 PM\nLocation: Rooftop Lounge"
+    }
+  },
+  {
+    id: "birthday-3",
+    name: "Party Time",
+    previewUrl: "",
+    category: "birthday",
+    backgroundColor: "#D3E4FD",
+    textColor: "#2B5998",
+    defaultText: {
+      title: "Let's Party! 🎉",
+      message: "I'm turning 30 and want you there!\n\nDate: July 22, 2025\nTime: 8:00 PM\nLocation: Downtown Nightclub\n\nBring your dancing shoes!"
     }
   },
   {
@@ -148,6 +171,30 @@ const templates: Template[] = [
     defaultText: {
       title: "Ring in the New Year",
       message: "Join us as we welcome 2026!\n\nDate: December 31, 2025\nTime: 9:00 PM\nLocation: Skyline Lounge"
+    }
+  },
+  {
+    id: "valentines-1",
+    name: "Love Note",
+    previewUrl: "",
+    category: "holiday",
+    backgroundColor: "#FFCCD5",
+    textColor: "#D81E5B",
+    defaultText: {
+      title: "Be My Valentine ❤️",
+      message: "You make every day special\nWill you be mine?\n\nDate: February 14, 2025\nTime: 7:00 PM\nLocation: Our favorite restaurant"
+    }
+  },
+  {
+    id: "thankful-1",
+    name: "Gratitude",
+    previewUrl: "",
+    category: "holiday",
+    backgroundColor: "#FDF0D5",
+    textColor: "#663F3F",
+    defaultText: {
+      title: "Giving Thanks",
+      message: "Join our family for a Thanksgiving feast\n\nDate: November 27, 2025\nTime: 4:00 PM\nLocation: Our home\n\nBring your appetite and gratitude!"
     }
   }
 ];

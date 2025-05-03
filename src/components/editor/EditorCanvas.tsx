@@ -20,6 +20,69 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
   // Default aspect ratio for invitation cards (typically 5x7)
   const aspectRatio = "aspect-[5/7]";
 
+  // Get decorative elements based on template category
+  const getDecorativeElements = () => {
+    if (!template) return null;
+    
+    switch(template.category) {
+      case "wedding":
+        return (
+          <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10">
+            <div className="absolute top-4 left-4 right-4 bottom-4 border border-current rounded-md"></div>
+            <div className="absolute top-8 left-8 right-8 bottom-8 border border-current rounded-md"></div>
+            <div className="absolute top-6 right-6 text-4xl">💍</div>
+            <div className="absolute bottom-6 left-6 text-4xl">💐</div>
+          </div>
+        );
+      case "birthday":
+        return (
+          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+            <div className="absolute top-2 right-2 text-4xl opacity-20" style={{ color: textColor }}>🎂</div>
+            <div className="absolute bottom-2 left-2 text-4xl opacity-20" style={{ color: textColor }}>🎈</div>
+            <div className="absolute top-2 left-2 text-4xl opacity-20" style={{ color: textColor }}>🎉</div>
+            <div className="absolute bottom-2 right-2 text-4xl opacity-20" style={{ color: textColor }}>🎁</div>
+          </div>
+        );
+      case "baby":
+        return (
+          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+            <div className="absolute top-3 right-6 text-4xl opacity-20" style={{ color: textColor }}>👶</div>
+            <div className="absolute bottom-3 left-6 text-4xl opacity-20" style={{ color: textColor }}>🍼</div>
+            <div className="absolute top-6 left-3 text-4xl opacity-20" style={{ color: textColor }}>🧸</div>
+            <div className="absolute bottom-6 right-3 text-4xl opacity-20" style={{ color: textColor }}>🧦</div>
+          </div>
+        );
+      case "graduation":
+        return (
+          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+            <div className="absolute top-3 right-6 text-4xl opacity-20" style={{ color: textColor }}>🎓</div>
+            <div className="absolute bottom-3 left-6 text-4xl opacity-20" style={{ color: textColor }}>📚</div>
+            <div className="absolute top-6 left-3 text-4xl opacity-20" style={{ color: textColor }}>🎯</div>
+            <div className="absolute bottom-6 right-3 text-4xl opacity-20" style={{ color: textColor }}>✨</div>
+          </div>
+        );
+      case "holiday":
+        return (
+          <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+            <div className="absolute top-3 right-6 text-4xl opacity-20" style={{ color: textColor }}>🎄</div>
+            <div className="absolute bottom-3 left-6 text-4xl opacity-20" style={{ color: textColor }}>❄️</div>
+            <div className="absolute top-6 left-3 text-4xl opacity-20" style={{ color: textColor }}>🎁</div>
+            <div className="absolute bottom-6 right-3 text-4xl opacity-20" style={{ color: textColor }}>✨</div>
+          </div>
+        );
+      case "corporate":
+        return (
+          <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10">
+            <div className="absolute top-4 left-4 right-4 bottom-4 border border-current rounded-md"></div>
+            <div className="absolute top-2 right-2 text-4xl opacity-20" style={{ color: textColor }}>📊</div>
+            <div className="absolute bottom-2 left-2 text-4xl opacity-20" style={{ color: textColor }}>💼</div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="w-full flex justify-center">
       <div 
@@ -28,23 +91,10 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
           backgroundColor: backgroundColor,
         }}
       >
-        {/* If a template is selected, we could add a background image or pattern here */}
+        {/* Background patterns and decorative elements */}
+        {getDecorativeElements()}
+        
         <div className="flex flex-col items-center justify-center text-center p-8 h-full relative">
-          {/* Decorative elements based on template category */}
-          {template && template.category === "wedding" && (
-            <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-10">
-              <div className="absolute top-4 left-4 right-4 bottom-4 border border-current rounded-md"></div>
-              <div className="absolute top-8 left-8 right-8 bottom-8 border border-current rounded-md"></div>
-            </div>
-          )}
-          
-          {template && template.category === "birthday" && (
-            <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-              <div className="absolute top-2 right-2 text-4xl opacity-10" style={{ color: textColor }}>🎂</div>
-              <div className="absolute bottom-2 left-2 text-4xl opacity-10" style={{ color: textColor }}>🎈</div>
-            </div>
-          )}
-          
           <h2 
             className="text-3xl md:text-4xl font-bold mb-6 transition-all"
             style={{ color: textColor }}

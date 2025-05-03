@@ -6,6 +6,7 @@ import EditorCanvas from "@/components/editor/EditorCanvas";
 import Header from "@/components/layout/Header";
 import EditorActions from "@/components/editor/EditorActions";
 import EditorControls from "@/components/editor/EditorControls";
+import html2canvas from "html2canvas";
 
 // Simple template data structure
 export interface Template {
@@ -28,6 +29,9 @@ const CardEditor = () => {
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [textColor, setTextColor] = useState("#000000");
   
+  // Reference for the canvas to download
+  const canvasRef = useState<HTMLDivElement | null>(null);
+  
   const handleTemplateSelect = (template: Template) => {
     setSelectedTemplate(template);
     setTitle(template.defaultText.title);
@@ -38,18 +42,62 @@ const CardEditor = () => {
   };
 
   const handleSave = () => {
-    // Would connect to backend in future iterations
+    // In a real app, this would save to the user's account
+    const savedDesign = {
+      template: selectedTemplate?.id || null,
+      title,
+      message,
+      backgroundColor,
+      textColor
+    };
+    
+    // In a production environment, this would connect to a backend
+    localStorage.setItem('saved-invitation', JSON.stringify(savedDesign));
     toast.success("Design saved successfully!");
   };
 
   const handleDownload = () => {
-    // Would implement actual download functionality in future iterations
-    toast.success("Download started!");
+    const cardElement = document.querySelector('.card-canvas') as HTMLElement;
+    
+    if (!cardElement) {
+      toast.error("Could not find card to download");
+      return;
+    }
+    
+    toast.promise(
+      html2canvas(cardElement).then(canvas => {
+        // Create download link
+        const link = document.createElement('a');
+        link.download = `${title || 'invitation'}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }),
+      {
+        loading: 'Preparing your download...',
+        success: 'Download started!',
+        error: 'Could not generate image. Please try again.'
+      }
+    );
   };
 
   const handleShare = () => {
-    // Would implement sharing functionality in future iterations
-    toast.success("Sharing options opened!");
+    // Check if Web Share API is supported
+    if (navigator.share) {
+      navigator.share({
+        title: title || 'My Custom Invitation',
+        text: 'Check out this invitation I created!',
+        // In a real app, this would be a link to a shared version of the card
+        url: window.location.href
+      })
+        .then(() => toast.success("Shared successfully!"))
+        .catch(() => toast.error("Sharing canceled"));
+    } else {
+      // Fallback for browsers that don't support the Web Share API
+      // Create a shareable link (in a real app, this would generate a unique URL)
+      navigator.clipboard.writeText(window.location.href)
+        .then(() => toast.success("Link copied to clipboard! Now you can share it."))
+        .catch(() => toast.error("Could not copy link. Please try again."));
+    }
   };
 
   return (
@@ -65,13 +113,15 @@ const CardEditor = () => {
           <div className="lg:col-span-2">
             <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
               <CardContent className="p-6">
-                <EditorCanvas
-                  title={title}
-                  message={message}
-                  backgroundColor={backgroundColor}
-                  textColor={textColor}
-                  template={selectedTemplate}
-                />
+                <div className="card-canvas">
+                  <EditorCanvas
+                    title={title}
+                    message={message}
+                    backgroundColor={backgroundColor}
+                    textColor={textColor}
+                    template={selectedTemplate}
+                  />
+                </div>
               </CardContent>
             </Card>
             
