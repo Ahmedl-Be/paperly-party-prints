@@ -8,6 +8,8 @@ interface EditorCanvasProps {
   backgroundColor: string;
   textColor: string;
   template: Template | null;
+  backgroundImage: string | null;
+  overlayOpacity: number;
 }
 
 const EditorCanvas: React.FC<EditorCanvasProps> = ({
@@ -15,7 +17,9 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
   message,
   backgroundColor,
   textColor,
-  template
+  template,
+  backgroundImage,
+  overlayOpacity
 }) => {
   // Default aspect ratio for invitation cards (typically 5x7)
   const aspectRatio = "aspect-[5/7]";
@@ -86,15 +90,38 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
   return (
     <div className="w-full flex justify-center">
       <div 
-        className={`${aspectRatio} w-full max-w-md shadow-lg rounded-md overflow-hidden border border-gray-200 flex flex-col transition-all duration-300`}
+        className={`${aspectRatio} w-full max-w-md shadow-lg rounded-md overflow-hidden border border-gray-200 flex flex-col transition-all duration-300 relative`}
         style={{ 
           backgroundColor: backgroundColor,
         }}
       >
-        {/* Background patterns and decorative elements */}
-        {getDecorativeElements()}
+        {/* Background image if available */}
+        {backgroundImage && (
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
+            style={{
+              backgroundImage: `url(${backgroundImage})`,
+            }}
+          ></div>
+        )}
         
-        <div className="flex flex-col items-center justify-center text-center p-8 h-full relative">
+        {/* Color overlay for background image */}
+        {backgroundImage && (
+          <div 
+            className="absolute inset-0 z-10"
+            style={{ 
+              backgroundColor: backgroundColor,
+              opacity: overlayOpacity
+            }}
+          ></div>
+        )}
+        
+        {/* Background patterns and decorative elements */}
+        <div className={backgroundImage ? "z-20" : ""}>
+          {getDecorativeElements()}
+        </div>
+        
+        <div className={`flex flex-col items-center justify-center text-center p-8 h-full relative ${backgroundImage ? "z-20" : ""}`}>
           <h2 
             className="text-3xl md:text-4xl font-bold mb-6 transition-all"
             style={{ color: textColor }}

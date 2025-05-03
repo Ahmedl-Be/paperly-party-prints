@@ -28,6 +28,8 @@ const CardEditor = () => {
   const [message, setMessage] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("#ffffff");
   const [textColor, setTextColor] = useState("#000000");
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  const [overlayOpacity, setOverlayOpacity] = useState(0.3);
   
   // Reference for the canvas to download
   const canvasRef = useState<HTMLDivElement | null>(null);
@@ -48,7 +50,9 @@ const CardEditor = () => {
       title,
       message,
       backgroundColor,
-      textColor
+      textColor,
+      backgroundImage,
+      overlayOpacity
     };
     
     // In a production environment, this would connect to a backend
@@ -120,6 +124,8 @@ const CardEditor = () => {
                     backgroundColor={backgroundColor}
                     textColor={textColor}
                     template={selectedTemplate}
+                    backgroundImage={backgroundImage}
+                    overlayOpacity={overlayOpacity}
                   />
                 </div>
               </CardContent>
@@ -145,6 +151,10 @@ const CardEditor = () => {
               textColor={textColor}
               setTextColor={setTextColor}
               onSelectTemplate={handleTemplateSelect}
+              backgroundImage={backgroundImage}
+              setBackgroundImage={setBackgroundImage}
+              overlayOpacity={overlayOpacity}
+              setOverlayOpacity={setOverlayOpacity}
             />
           </div>
         </div>
