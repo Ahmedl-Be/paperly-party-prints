@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,7 +11,8 @@ import Templates from "./pages/Templates";
 import NotFound from "./pages/NotFound";
 
 const App = () => {
-  const queryClient = React.useState(() => new QueryClient())[0];
+  // Initialize QueryClient correctly - create a new instance directly
+  const queryClient = new QueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
