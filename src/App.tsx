@@ -15,7 +15,7 @@ import Search from "./pages/Search";
 import NotFound from "./pages/NotFound";
 import WorkInProgress from "./components/editor/WorkInProgress";
 import AiCreator from "./pages/AiCreator";
-import { QrCode, Smile, Search as SearchIcon, Wand } from "lucide-react";
+import { QrCode, Smile, Search as SearchIcon, Wand, WandSparkles } from "lucide-react";
 
 const App = () => {
   // Initialize QueryClient correctly - create a new instance directly
@@ -78,6 +78,18 @@ const App = () => {
                   icon={<SearchIcon className="h-10 w-10 text-purple-500" />}
                   availableIn="Coming in July 2025"
                   returnPath="/search"
+                />
+              } 
+            />
+            <Route 
+              path="/ai-module" 
+              element={
+                <WorkInProgress 
+                  title="Advanced AI Assistant"
+                  description="We're enhancing our AI capabilities to provide better template suggestions and customization options based on your specific event needs."
+                  icon={<WandSparkles className="h-10 w-10 text-purple-500" />}
+                  availableIn="Coming in August 2025"
+                  returnPath="/ai-creator"
                 />
               } 
             />

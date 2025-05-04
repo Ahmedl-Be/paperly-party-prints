@@ -19,6 +19,13 @@ const AiCreator = () => {
   const [style, setStyle] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedTemplates, setGeneratedTemplates] = useState<Template[]>([]);
+  const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
+  const [aiConversation, setAiConversation] = useState<{role: string; content: string}[]>([
+    { 
+      role: "assistant", 
+      content: "Hello! I'm your AI design assistant. I can help you create beautiful invitation templates based on your preferences. What kind of invitation are you looking to design today?" 
+    }
+  ]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,57 +37,154 @@ const AiCreator = () => {
     
     setIsGenerating(true);
     
-    // Simulate AI generation with a timeout
+    // Add user message to conversation
+    const userMessage = `I need a ${style ? style + " style " : ""}${occasion} invitation for: ${prompt}`;
+    const newConversation = [
+      ...aiConversation,
+      { role: "user", content: userMessage }
+    ];
+    
+    setAiConversation(newConversation);
+    
+    // Simulate AI thinking with a timeout
     setTimeout(() => {
-      // These would normally be generated based on the user's input
-      const aiTemplates: Template[] = [
-        {
-          id: "ai-generated-1",
-          name: "AI Generated: " + occasion + " Template",
-          previewUrl: "",
-          category: occasion.toLowerCase(),
-          backgroundColor: "#F4F0FF",
-          textColor: "#6B46C1",
-          defaultText: {
-            title: `Your ${occasion} Invitation`,
-            message: `${prompt}\n\nDate: June 15, 2025\nTime: 2:00 PM\nLocation: To be announced`
-          }
-        },
-        {
-          id: "ai-generated-2",
-          name: "AI Generated: Modern " + occasion,
-          previewUrl: "",
-          category: occasion.toLowerCase(),
-          backgroundColor: "#E6FFFA",
-          textColor: "#2C7A7B",
-          defaultText: {
-            title: `Join Our ${occasion}`,
-            message: `${prompt}\n\nWe hope to see you there!\nDate: July 20, 2025\nTime: 3:00 PM`
-          }
-        },
-        {
-          id: "ai-generated-3",
-          name: "AI Generated: Elegant " + occasion,
-          previewUrl: "",
-          category: occasion.toLowerCase(),
-          backgroundColor: "#FFF5F5",
-          textColor: "#C53030",
-          defaultText: {
-            title: `${occasion} Celebration`,
-            message: `${prompt}\n\nSave the date!\nAugust 10, 2025\n4:00 PM`
-          }
-        }
-      ];
+      // Generate AI response based on user input
+      const aiResponse = generateAiResponse(occasion, style, prompt);
       
+      setAiConversation([
+        ...newConversation,
+        { role: "assistant", content: aiResponse }
+      ]);
+      
+      // Generate templates based on user input
+      const aiTemplates = generateTemplates(occasion, style, prompt);
       setGeneratedTemplates(aiTemplates);
+      
+      // Generate helpful suggestions for the user
+      const suggestions = generateSuggestions(occasion, style);
+      setAiSuggestions(suggestions);
+      
       setIsGenerating(false);
       toast.success("AI has created template ideas for you!");
     }, 2500);
   };
   
+  const generateAiResponse = (occasion: string, style: string, prompt: string): string => {
+    const responses = [
+      `I've created some ${occasion} invitation templates based on your description. I focused on ${style || "versatile"} designs that capture the essence of your event. Take a look at the options below and let me know if any of them match what you're looking for!`,
+      `Here are some ${style || "beautiful"} ${occasion} templates I've designed based on your requirements. I've incorporated elements from your description to make them unique. Feel free to customize any of them further!`,
+      `Based on your ${occasion} event description, I've generated these template options with a ${style || "modern"} aesthetic. Each one can be fully customized to match your vision perfectly.`
+    ];
+    
+    return responses[Math.floor(Math.random() * responses.length)];
+  };
+  
+  const generateSuggestions = (occasion: string, style: string): string[] => {
+    const suggestions = [
+      `Try adding more specific color preferences to your description`,
+      `Consider mentioning the tone you want (formal, casual, playful)`,
+      `Describe any theme elements you'd like included`,
+      `Mention if there are any cultural elements you want represented`
+    ];
+    
+    if (occasion === "Wedding") {
+      suggestions.push(`Include details about your wedding venue for better context`);
+      suggestions.push(`Mention if you have specific wedding colors or flowers`);
+    } else if (occasion === "Birthday") {
+      suggestions.push(`Specify the age of the birthday person for age-appropriate designs`);
+      suggestions.push(`Mention any theme like superhero, princess, or vintage`);
+    }
+    
+    return suggestions;
+  };
+  
+  const generateTemplates = (occasion: string, style: string, prompt: string): Template[] => {
+    // Generate more personalized templates based on user input
+    const colors = {
+      Wedding: ["#F9F5FF", "#FEF7CD", "#FFDEE2"],
+      Birthday: ["#E5DEFF", "#D3E4FD", "#FDE1D3"],
+      "Baby Shower": ["#E6FFFA", "#FFF5F5", "#FFEEF2"],
+      Graduation: ["#F2FCE2", "#EDF7FF", "#FFF4E5"],
+      Corporate: ["#F6F8FD", "#ECF5FF", "#F9FAFB"],
+      Holiday: ["#FFDEE2", "#E5DEFF", "#FDF0D5"],
+      Other: ["#F4F0FF", "#E6FFFA", "#FFF5F5"]
+    };
+    
+    const textColors = {
+      Wedding: ["#7E69AB", "#816B56", "#C42847"],
+      Birthday: ["#4C3889", "#2B5998", "#B44D12"],
+      "Baby Shower": ["#2C7A7B", "#C53030", "#DD6B8F"],
+      Graduation: ["#445D29", "#2A4365", "#8D5012"],
+      Corporate: ["#1A1F2C", "#2C4975", "#3D3D3D"],
+      Holiday: ["#D81E5B", "#663F3F", "#9F580A"],
+      Other: ["#6B46C1", "#2C7A7B", "#C53030"]
+    };
+    
+    // Use the selected occasion or default to "Other"
+    const selectedOccasion = occasion as keyof typeof colors || "Other";
+    const colorOptions = colors[selectedOccasion];
+    const textColorOptions = textColors[selectedOccasion];
+    
+    // Create templates with variations based on user input
+    return [
+      {
+        id: `ai-generated-1-${Date.now()}`,
+        name: `AI Generated: ${style || "Modern"} ${occasion} Template`,
+        previewUrl: "",
+        category: occasion.toLowerCase(),
+        backgroundColor: colorOptions[0],
+        textColor: textColorOptions[0],
+        defaultText: {
+          title: `Your ${occasion} Invitation`,
+          message: `${prompt}\n\nDate: June 15, 2025\nTime: 2:00 PM\nLocation: To be announced`
+        }
+      },
+      {
+        id: `ai-generated-2-${Date.now()}`,
+        name: `AI Generated: ${style || "Elegant"} ${occasion}`,
+        previewUrl: "",
+        category: occasion.toLowerCase(),
+        backgroundColor: colorOptions[1],
+        textColor: textColorOptions[1],
+        defaultText: {
+          title: `Join Our ${occasion}`,
+          message: `${prompt}\n\nWe hope to see you there!\nDate: July 20, 2025\nTime: 3:00 PM`
+        }
+      },
+      {
+        id: `ai-generated-3-${Date.now()}`,
+        name: `AI Generated: ${style || "Creative"} ${occasion}`,
+        previewUrl: "",
+        category: occasion.toLowerCase(),
+        backgroundColor: colorOptions[2],
+        textColor: textColorOptions[2],
+        defaultText: {
+          title: `${occasion} Celebration`,
+          message: `${prompt}\n\nSave the date!\nAugust 10, 2025\n4:00 PM`
+        }
+      }
+    ];
+  };
+  
   const handleTemplateSelect = (template: Template) => {
+    // Add a message to the conversation
+    setAiConversation([
+      ...aiConversation,
+      { role: "user", content: `I like the "${template.name}" template.` },
+      { 
+        role: "assistant", 
+        content: `Great choice! I've selected the "${template.name}" template for you. You can now customize it in the editor or continue refining it here with more specific requests.` 
+      }
+    ]);
+    
     toast.success(`Selected ${template.name}`);
     // This would normally redirect to editor with the template
+  };
+  
+  const handleSuggestionClick = (suggestion: string) => {
+    // Add the suggestion to the prompt
+    setPrompt(prompt ? `${prompt}\n${suggestion}` : suggestion);
+    toast.info("Suggestion added to your description!");
   };
 
   return (
@@ -104,94 +208,163 @@ const AiCreator = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-              {/* AI Input Form */}
-              <Card className="md:col-span-2 shadow-lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <WandSparkles className="h-5 w-5 text-purple-500" /> 
-                    AI Template Creator
-                  </CardTitle>
-                  <CardDescription>
-                    Describe what you need for your invitation
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="occasion">Occasion</Label>
-                      <Select 
-                        value={occasion} 
-                        onValueChange={setOccasion}
-                        required
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select occasion" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Wedding">Wedding</SelectItem>
-                          <SelectItem value="Birthday">Birthday</SelectItem>
-                          <SelectItem value="Baby Shower">Baby Shower</SelectItem>
-                          <SelectItem value="Graduation">Graduation</SelectItem>
-                          <SelectItem value="Corporate">Corporate</SelectItem>
-                          <SelectItem value="Holiday">Holiday</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="style">Style Preference</Label>
-                      <Select 
-                        value={style} 
-                        onValueChange={setStyle}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select style (optional)" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Modern">Modern</SelectItem>
-                          <SelectItem value="Classic">Classic</SelectItem>
-                          <SelectItem value="Minimalist">Minimalist</SelectItem>
-                          <SelectItem value="Vintage">Vintage</SelectItem>
-                          <SelectItem value="Elegant">Elegant</SelectItem>
-                          <SelectItem value="Playful">Playful</SelectItem>
-                          <SelectItem value="Rustic">Rustic</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="prompt">Describe your event</Label>
-                      <Textarea
-                        id="prompt"
-                        placeholder="E.g., I need a wedding invitation for a summer garden wedding with floral themes and pastel colors..."
-                        className="min-h-32"
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        required
-                      />
-                    </div>
-                    
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-purple-600 hover:bg-purple-700"
-                      disabled={isGenerating}
-                    >
-                      {isGenerating ? (
-                        <>Generating Templates...</>
-                      ) : (
-                        <>
-                          <Wand className="mr-2 h-4 w-4" />
-                          Generate Templates
-                        </>
+              {/* AI Input Form with Conversation */}
+              <div className="md:col-span-2 space-y-6">
+                {/* AI Conversation */}
+                <Card className="shadow-lg">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <WandSparkles className="h-5 w-5 text-purple-500" /> 
+                      AI Assistant
+                    </CardTitle>
+                    <CardDescription>
+                      Chat with our AI to create your perfect invitation
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ScrollArea className="h-48 pr-4 mb-4">
+                      <div className="space-y-4">
+                        {aiConversation.map((message, index) => (
+                          <div 
+                            key={index}
+                            className={`flex ${message.role === "assistant" ? "justify-start" : "justify-end"}`}
+                          >
+                            <div 
+                              className={`max-w-[80%] rounded-lg p-3 ${
+                                message.role === "assistant" 
+                                  ? "bg-purple-100 text-purple-900" 
+                                  : "bg-blue-100 text-blue-900"
+                              }`}
+                            >
+                              <p className="text-sm">{message.content}</p>
+                            </div>
+                          </div>
+                        ))}
+                        {isGenerating && (
+                          <div className="flex justify-start">
+                            <div className="max-w-[80%] rounded-lg p-3 bg-purple-100 text-purple-900">
+                              <div className="flex space-x-2">
+                                <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></div>
+                                <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse delay-150"></div>
+                                <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse delay-300"></div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </ScrollArea>
+                  </CardContent>
+                </Card>
+              
+                {/* AI Input Form */}
+                <Card className="shadow-lg">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Wand className="h-5 w-5 text-purple-500" /> 
+                      Template Creator
+                    </CardTitle>
+                    <CardDescription>
+                      Describe what you need for your invitation
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="occasion">Occasion</Label>
+                        <Select 
+                          value={occasion} 
+                          onValueChange={setOccasion}
+                          required
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select occasion" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Wedding">Wedding</SelectItem>
+                            <SelectItem value="Birthday">Birthday</SelectItem>
+                            <SelectItem value="Baby Shower">Baby Shower</SelectItem>
+                            <SelectItem value="Graduation">Graduation</SelectItem>
+                            <SelectItem value="Corporate">Corporate</SelectItem>
+                            <SelectItem value="Holiday">Holiday</SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="style">Style Preference</Label>
+                        <Select 
+                          value={style} 
+                          onValueChange={setStyle}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select style (optional)" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Modern">Modern</SelectItem>
+                            <SelectItem value="Classic">Classic</SelectItem>
+                            <SelectItem value="Minimalist">Minimalist</SelectItem>
+                            <SelectItem value="Vintage">Vintage</SelectItem>
+                            <SelectItem value="Elegant">Elegant</SelectItem>
+                            <SelectItem value="Playful">Playful</SelectItem>
+                            <SelectItem value="Rustic">Rustic</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label htmlFor="prompt">Describe your event</Label>
+                        <Textarea
+                          id="prompt"
+                          placeholder="E.g., I need a wedding invitation for a summer garden wedding with floral themes and pastel colors..."
+                          className="min-h-32"
+                          value={prompt}
+                          onChange={(e) => setPrompt(e.target.value)}
+                          required
+                        />
+                      </div>
+                      
+                      {aiSuggestions.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium text-gray-500">AI Suggestions:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {aiSuggestions.map((suggestion, index) => (
+                              <Button 
+                                key={index} 
+                                type="button" 
+                                variant="outline" 
+                                size="sm" 
+                                onClick={() => handleSuggestionClick(suggestion)}
+                                className="text-xs bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100"
+                              >
+                                {suggestion}
+                              </Button>
+                            ))}
+                          </div>
+                        </div>
                       )}
-                    </Button>
-                  </form>
-                </CardContent>
-                <CardFooter className="flex justify-center border-t pt-4 text-sm text-gray-500">
-                  <p>Our AI learns from your preferences to create better templates</p>
-                </CardFooter>
-              </Card>
+                      
+                      <Button 
+                        type="submit" 
+                        className="w-full bg-purple-600 hover:bg-purple-700"
+                        disabled={isGenerating}
+                      >
+                        {isGenerating ? (
+                          <>Generating Templates...</>
+                        ) : (
+                          <>
+                            <Wand className="mr-2 h-4 w-4" />
+                            Generate Templates
+                          </>
+                        )}
+                      </Button>
+                    </form>
+                  </CardContent>
+                  <CardFooter className="flex justify-center border-t pt-4 text-sm text-gray-500">
+                    <p>Our AI learns from your preferences to create better templates</p>
+                  </CardFooter>
+                </Card>
+              </div>
               
               {/* AI Generated Templates */}
               <div className="md:col-span-3">

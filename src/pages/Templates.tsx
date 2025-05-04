@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -78,9 +79,9 @@ const Templates = () => {
               Browse hundreds of professionally designed templates for any occasion
             </p>
             
-            {/* Search Bar - Fixed alignment */}
+            {/* Search Bar - Fixed alignment issues */}
             <form onSubmit={handleSearch} className="relative max-w-lg mx-auto">
-              <div className="flex justify-center">
+              <div className="flex w-full">
                 <div className="relative flex-grow">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                   <Input

@@ -78,22 +78,27 @@ const Search = () => {
           Find the perfect template for your invitation
         </p>
         
+        {/* Fixed search bar container */}
         <div className="relative max-w-2xl mx-auto mb-8">
-          <SearchIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-          <Input
-            placeholder="Search by name, category, or style..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="pl-10 py-6 text-lg shadow-md focus-visible:ring-purple-500"
-          />
-          <Button 
-            onClick={handleSearch}
-            disabled={isSearching}
-            className="absolute right-2 top-2 bg-purple-600 hover:bg-purple-700"
-          >
-            {isSearching ? "Searching..." : "Search"}
-          </Button>
+          <div className="flex w-full items-center">
+            <div className="relative flex-grow">
+              <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Input
+                placeholder="Search by name, category, or style..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="pl-10 py-6 text-lg shadow-md focus-visible:ring-purple-500 w-full"
+              />
+            </div>
+            <Button 
+              onClick={handleSearch}
+              disabled={isSearching}
+              className="ml-2 bg-purple-600 hover:bg-purple-700 h-12"
+            >
+              {isSearching ? "Searching..." : "Search"}
+            </Button>
+          </div>
         </div>
         
         {results.length > 0 && (
