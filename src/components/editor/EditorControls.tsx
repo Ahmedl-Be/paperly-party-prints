@@ -1,15 +1,18 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { QrCode, Smile, ImagePlus, Upload } from "lucide-react";
+import { toast } from "@/components/ui/sonner";
 import ColorPicker from "@/components/editor/ColorPicker";
 import TemplateGallery from "@/components/editor/TemplateGallery";
+import QrCodeGenerator from "@/components/editor/QrCodeGenerator";
+import StickerSelector from "@/components/editor/StickerSelector";
+import DesignTips from "@/components/editor/DesignTips";
 import type { Template } from "@/pages/CardEditor";
-import { toast } from "@/components/ui/sonner";
 
 interface EditorControlsProps {
   title: string;
@@ -25,6 +28,9 @@ interface EditorControlsProps {
   setBackgroundImage: (url: string | null) => void;
   overlayOpacity: number;
   setOverlayOpacity: (opacity: number) => void;
+  onAddQRCode?: (data: string, type: string, position: string) => void;
+  onAddSticker?: (emoji: string, position: { x: number, y: number }) => void;
+  designProgress?: number;
 }
 
 const EditorControls: React.FC<EditorControlsProps> = ({
@@ -40,7 +46,10 @@ const EditorControls: React.FC<EditorControlsProps> = ({
   backgroundImage,
   setBackgroundImage,
   overlayOpacity,
-  setOverlayOpacity
+  setOverlayOpacity,
+  onAddQRCode,
+  onAddSticker,
+  designProgress = 50
 }) => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -71,6 +80,18 @@ const EditorControls: React.FC<EditorControlsProps> = ({
   const removeBackgroundImage = () => {
     setBackgroundImage(null);
     toast.success("Background image removed");
+  };
+
+  const handleAddQRCode = (data: string, type: string, position: string) => {
+    if (onAddQRCode) {
+      onAddQRCode(data, type, position);
+    }
+  };
+
+  const handleAddSticker = (emoji: string, position: { x: number, y: number }) => {
+    if (onAddSticker) {
+      onAddSticker(emoji, position);
+    }
   };
 
   return (
@@ -150,7 +171,7 @@ const EditorControls: React.FC<EditorControlsProps> = ({
               )}
             </TabsContent>
             
-            {/* New Image Tab */}
+            {/* Image Tab */}
             <TabsContent value="image" className="p-4 space-y-4">
               <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                 <ImagePlus className="h-12 w-12 mx-auto text-gray-400 mb-3" />
@@ -200,9 +221,14 @@ const EditorControls: React.FC<EditorControlsProps> = ({
                   <h3 className="font-medium">Add QR Code</h3>
                 </div>
                 <p className="text-sm text-gray-600">Add a QR code for RSVP links, maps, or your website.</p>
-                <Button variant="outline" size="sm" className="w-full border-purple-200 text-purple-600">
-                  Coming Soon
-                </Button>
+                
+                {onAddQRCode ? (
+                  <QrCodeGenerator onGenerate={handleAddQRCode} />
+                ) : (
+                  <Button variant="outline" size="sm" className="w-full border-purple-200 text-purple-600">
+                    Coming Soon
+                  </Button>
+                )}
               </div>
               
               <div className="bg-purple-50 rounded-md p-4 space-y-3">
@@ -211,35 +237,22 @@ const EditorControls: React.FC<EditorControlsProps> = ({
                   <h3 className="font-medium">Stickers & Emojis</h3>
                 </div>
                 <p className="text-sm text-gray-600">Add fun stickers and emojis to your invitation.</p>
-                <Button variant="outline" size="sm" className="w-full border-purple-200 text-purple-600">
-                  Coming Soon
-                </Button>
+                
+                {onAddSticker ? (
+                  <StickerSelector onSelect={handleAddSticker} />
+                ) : (
+                  <Button variant="outline" size="sm" className="w-full border-purple-200 text-purple-600">
+                    Coming Soon
+                  </Button>
+                )}
               </div>
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
       
-      {/* Pro Tips */}
-      <Card className="mt-4 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
-        <CardContent className="p-4">
-          <h3 className="font-medium text-purple-800 mb-2">Pro Tips</h3>
-          <ul className="text-sm text-gray-700 space-y-2">
-            <li className="flex items-start">
-              <span className="inline-block bg-purple-200 text-purple-800 rounded-full h-5 w-5 flex items-center justify-center text-xs mr-2">✓</span>
-              Try pastel backgrounds for a softer feel
-            </li>
-            <li className="flex items-start">
-              <span className="inline-block bg-purple-200 text-purple-800 rounded-full h-5 w-5 flex items-center justify-center text-xs mr-2">✓</span>
-              Keep your message concise for readability
-            </li>
-            <li className="flex items-start">
-              <span className="inline-block bg-purple-200 text-purple-800 rounded-full h-5 w-5 flex items-center justify-center text-xs mr-2">✓</span>
-              Add images that match your theme
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
+      {/* Design Tips */}
+      <DesignTips designProgress={designProgress} />
     </div>
   );
 };

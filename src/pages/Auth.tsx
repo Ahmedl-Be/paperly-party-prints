@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,10 +11,21 @@ import Header from "@/components/layout/Header";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>("signin");
+
+  // Check URL for tab parameter
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get("tab");
+    if (tabParam === "signup") {
+      setActiveTab("signup");
+    }
+  }, [location]);
 
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,20 +63,35 @@ const Auth = () => {
     }, 1000);
   };
 
+  const handleSocialLogin = (provider: string) => {
+    setIsLoading(true);
+    
+    // Simulate API call for social login
+    setTimeout(() => {
+      localStorage.setItem('user', JSON.stringify({ 
+        email: `user@${provider.toLowerCase()}.com`, 
+        name: `${provider} User` 
+      }));
+      toast.success(`Signed in with ${provider}!`);
+      navigate("/templates");
+      setIsLoading(false);
+    }, 1000);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-md mx-auto">
-          <Card>
+          <Card className="shadow-lg border-purple-100">
             <CardHeader className="text-center">
-              <h2 className="text-2xl font-bold">Welcome to Card Designer</h2>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">Welcome to CardCrafter</h2>
               <p className="text-gray-500">Sign in to access all features</p>
             </CardHeader>
             
             <CardContent>
-              <Tabs defaultValue="signin" className="w-full">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid grid-cols-2 mb-6">
                   <TabsTrigger value="signin">Sign In</TabsTrigger>
                   <TabsTrigger value="signup">Sign Up</TabsTrigger>
@@ -110,6 +136,35 @@ const Auth = () => {
                     >
                       {isLoading ? "Signing in..." : "Sign In"}
                     </Button>
+                    
+                    {/* Social login options */}
+                    <div className="relative my-6">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-gray-300"></span>
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white px-2 text-gray-500">Or continue with</span>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => handleSocialLogin("Google")}
+                        disabled={isLoading}
+                      >
+                        Google
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => handleSocialLogin("Facebook")}
+                        disabled={isLoading}
+                      >
+                        Facebook
+                      </Button>
+                    </div>
                   </form>
                 </TabsContent>
                 
@@ -158,6 +213,35 @@ const Auth = () => {
                     >
                       {isLoading ? "Creating account..." : "Create Account"}
                     </Button>
+                    
+                    {/* Social signup options */}
+                    <div className="relative my-6">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t border-gray-300"></span>
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white px-2 text-gray-500">Or sign up with</span>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => handleSocialLogin("Google")}
+                        disabled={isLoading}
+                      >
+                        Google
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => handleSocialLogin("Facebook")}
+                        disabled={isLoading}
+                      >
+                        Facebook
+                      </Button>
+                    </div>
                   </form>
                 </TabsContent>
               </Tabs>

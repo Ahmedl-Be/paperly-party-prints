@@ -1,107 +1,139 @@
 
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search, Menu } from "lucide-react";
-import { useState } from "react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Menu, X, Search } from "lucide-react";
 
-const Header = () => {
+const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+  const location = useLocation();
+  const isActive = (path: string) => location.pathname === path;
+
+  const menuItems = [
+    { name: "Home", path: "/" },
+    { name: "Templates", path: "/templates" },
+    { name: "Create", path: "/create" },
+    { name: "Pricing", path: "/pricing" },
+    { name: "Contact", path: "/contact" }
+  ];
+
+  const handleMenuOpen = (open: boolean) => {
+    setIsMenuOpen(open);
+  };
+
   return (
-    <header className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+    <header className="border-b bg-white shadow-sm sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex justify-between items-center">
           {/* Logo */}
-          <div className="flex items-center">
-            <Link to="/" className="text-2xl font-bold text-purple-600">
-              Paperly
-            </Link>
-          </div>
-          
+          <Link to="/" className="flex items-center">
+            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">CardCrafter</span>
+          </Link>
+
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link to="/templates" className="text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors">
-              Templates
-            </Link>
-            <Link to="/create" className="text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors">
-              Create
-            </Link>
-            <Link to="/pricing" className="text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors">
-              Pricing
+          <nav className="hidden md:flex items-center space-x-1">
+            {menuItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                  isActive(item.path)
+                    ? "bg-purple-100 text-purple-800"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+            <Link
+              to="/search"
+              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                isActive("/search")
+                  ? "bg-purple-100 text-purple-800"
+                  : "text-gray-700 hover:bg-gray-100"
+              }`}
+              aria-label="Search"
+            >
+              <Search className="h-4 w-4" />
             </Link>
           </nav>
-          
-          {/* Search */}
-          <div className="hidden md:flex relative w-full max-w-xs mx-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input 
-              placeholder="Search templates..." 
-              className="pl-10 pr-4 py-2 w-full bg-gray-50 border-gray-200"
-            />
+
+          {/* Auth Buttons (Desktop) */}
+          <div className="hidden md:flex items-center space-x-3">
+            <Link to="/auth">
+              <Button variant="outline" size="sm">
+                Log In
+              </Button>
+            </Link>
+            <Link to="/auth?tab=signup">
+              <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+                Sign Up
+              </Button>
+            </Link>
           </div>
-          
-          {/* Actions */}
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" className="hidden md:flex">
-              Sign In
-            </Button>
-            <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
-              Get Started
-            </Button>
-            
-            {/* Mobile Menu Button */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="md:hidden"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <Sheet open={isMenuOpen} onOpenChange={handleMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm" className="px-2">
+                  {isMenuOpen ? (
+                    <X className="h-5 w-5" />
+                  ) : (
+                    <Menu className="h-5 w-5" />
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[250px] sm:w-[300px] pt-12">
+                <nav className="flex flex-col space-y-4">
+                  {menuItems.map((item) => (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      className={`px-4 py-2 text-base rounded-md ${
+                        isActive(item.path)
+                          ? "bg-purple-100 text-purple-800"
+                          : "hover:bg-gray-100"
+                      }`}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                  <Link
+                    to="/search"
+                    className={`px-4 py-2 text-base rounded-md flex items-center ${
+                      isActive("/search")
+                        ? "bg-purple-100 text-purple-800"
+                        : "hover:bg-gray-100"
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <Search className="h-4 w-4 mr-2" /> Search
+                  </Link>
+                  <div className="pt-4 border-t">
+                    <Link
+                      to="/auth"
+                      className="block px-4 py-2 mb-2 text-center border rounded-md hover:bg-gray-100"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Log In
+                    </Link>
+                    <Link
+                      to="/auth?tab=signup"
+                      className="block px-4 py-2 text-center bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
-      
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden py-4 px-4 bg-white border-t border-gray-100 shadow-lg">
-          <div className="flex items-center mb-4">
-            <Search className="text-gray-400 h-4 w-4 mr-3" />
-            <Input placeholder="Search templates..." className="w-full" />
-          </div>
-          <nav className="flex flex-col space-y-3">
-            <Link 
-              to="/templates" 
-              className="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Templates
-            </Link>
-            <Link 
-              to="/create" 
-              className="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Create
-            </Link>
-            <Link 
-              to="/pricing" 
-              className="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Pricing
-            </Link>
-            <Link 
-              to="/signin" 
-              className="px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-md"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Sign In
-            </Link>
-          </nav>
-        </div>
-      )}
     </header>
   );
 };

@@ -22,6 +22,22 @@ export interface Template {
   };
 }
 
+// QR Code data structure
+interface QRCode {
+  data: string;
+  type: string;
+  position: string;
+}
+
+// Sticker data structure
+interface Sticker {
+  emoji: string;
+  position: {
+    x: number;
+    y: number;
+  };
+}
+
 // History state for undo/redo functionality
 interface HistoryState {
   title: string;
@@ -30,6 +46,8 @@ interface HistoryState {
   textColor: string;
   backgroundImage: string | null;
   overlayOpacity: number;
+  qrCode: QRCode | undefined;
+  stickers: Sticker[];
 }
 
 const CardEditor = () => {
@@ -40,11 +58,28 @@ const CardEditor = () => {
   const [textColor, setTextColor] = useState("#000000");
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [overlayOpacity, setOverlayOpacity] = useState(0.3);
+  const [qrCode, setQrCode] = useState<QRCode | undefined>(undefined);
+  const [stickers, setStickers] = useState<Sticker[]>([]);
   
   // History states for undo/redo functionality
   const [history, setHistory] = useState<HistoryState[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isUndoRedoAction, setIsUndoRedoAction] = useState(false);
+  
+  // Calculate design progress based on completed elements
+  const calculateDesignProgress = () => {
+    let progress = 0;
+    if (title) progress += 15;
+    if (message) progress += 15;
+    if (backgroundImage) progress += 25;
+    if (qrCode) progress += 15;
+    if (stickers.length > 0) progress += 10;
+    if (backgroundColor !== "#ffffff") progress += 10;
+    if (textColor !== "#000000") progress += 10;
+    return Math.min(progress, 100);
+  };
+  
+  const designProgress = calculateDesignProgress();
   
   // Reference for the canvas to download
   const canvasRef = useState<HTMLDivElement | null>(null);
@@ -61,6 +96,8 @@ const CardEditor = () => {
         if (savedState.textColor) setTextColor(savedState.textColor);
         if (savedState.backgroundImage) setBackgroundImage(savedState.backgroundImage);
         if (savedState.overlayOpacity !== undefined) setOverlayOpacity(savedState.overlayOpacity);
+        if (savedState.qrCode) setQrCode(savedState.qrCode);
+        if (savedState.stickers) setStickers(savedState.stickers);
         
         toast.info("Your saved design has been loaded!");
       }
@@ -78,7 +115,9 @@ const CardEditor = () => {
         backgroundColor,
         textColor,
         backgroundImage,
-        overlayOpacity
+        overlayOpacity,
+        qrCode,
+        stickers
       };
       
       // If we're in the middle of the history, truncate it
@@ -99,7 +138,7 @@ const CardEditor = () => {
     } else {
       setIsUndoRedoAction(false);
     }
-  }, [title, message, backgroundColor, textColor, backgroundImage, overlayOpacity]);
+  }, [title, message, backgroundColor, textColor, backgroundImage, overlayOpacity, qrCode, stickers]);
   
   const handleTemplateSelect = (template: Template) => {
     setSelectedTemplate(template);
@@ -119,7 +158,9 @@ const CardEditor = () => {
       backgroundColor,
       textColor,
       backgroundImage,
-      overlayOpacity
+      overlayOpacity,
+      qrCode,
+      stickers
     };
     
     // In a production environment, this would connect to a backend
@@ -188,6 +229,8 @@ const CardEditor = () => {
       setTextColor(prevState.textColor);
       setBackgroundImage(prevState.backgroundImage);
       setOverlayOpacity(prevState.overlayOpacity);
+      setQrCode(prevState.qrCode);
+      setStickers(prevState.stickers);
       setHistoryIndex(historyIndex - 1);
       toast.info("Undo successful");
     } else {
@@ -205,11 +248,27 @@ const CardEditor = () => {
       setTextColor(nextState.textColor);
       setBackgroundImage(nextState.backgroundImage);
       setOverlayOpacity(nextState.overlayOpacity);
+      setQrCode(nextState.qrCode);
+      setStickers(nextState.stickers);
       setHistoryIndex(historyIndex + 1);
       toast.info("Redo successful");
     } else {
       toast.info("Nothing to redo");
     }
+  };
+
+  // Handle adding QR code
+  const handleAddQRCode = (data: string, type: string, position: string) => {
+    setQrCode({
+      data,
+      type,
+      position
+    });
+  };
+
+  // Handle adding stickers
+  const handleAddSticker = (emoji: string, position: { x: number, y: number }) => {
+    setStickers(prev => [...prev, { emoji, position }]);
   };
 
   // Auto-save draft on changes
@@ -223,7 +282,9 @@ const CardEditor = () => {
           backgroundColor,
           textColor,
           backgroundImage,
-          overlayOpacity
+          overlayOpacity,
+          qrCode,
+          stickers
         };
         localStorage.setItem('draft-invitation', JSON.stringify(draftDesign));
         console.log('Auto-saved draft');
@@ -231,7 +292,7 @@ const CardEditor = () => {
     }, 5000); // Save after 5 seconds of inactivity
     
     return () => clearTimeout(autosaveTimeout);
-  }, [title, message, backgroundColor, textColor, backgroundImage, overlayOpacity, selectedTemplate]);
+  }, [title, message, backgroundColor, textColor, backgroundImage, overlayOpacity, qrCode, stickers, selectedTemplate]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
@@ -255,6 +316,8 @@ const CardEditor = () => {
                     template={selectedTemplate}
                     backgroundImage={backgroundImage}
                     overlayOpacity={overlayOpacity}
+                    qrCode={qrCode}
+                    stickers={stickers}
                   />
                 </div>
               </CardContent>
@@ -288,6 +351,9 @@ const CardEditor = () => {
               setBackgroundImage={setBackgroundImage}
               overlayOpacity={overlayOpacity}
               setOverlayOpacity={setOverlayOpacity}
+              onAddQRCode={handleAddQRCode}
+              onAddSticker={handleAddSticker}
+              designProgress={designProgress}
             />
           </div>
         </div>

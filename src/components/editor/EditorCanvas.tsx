@@ -10,6 +10,18 @@ interface EditorCanvasProps {
   template: Template | null;
   backgroundImage: string | null;
   overlayOpacity: number;
+  qrCode?: {
+    data: string;
+    type: string;
+    position: string;
+  };
+  stickers?: {
+    emoji: string;
+    position: {
+      x: number;
+      y: number;
+    };
+  }[];
 }
 
 const EditorCanvas: React.FC<EditorCanvasProps> = ({
@@ -19,7 +31,9 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
   textColor,
   template,
   backgroundImage,
-  overlayOpacity
+  overlayOpacity,
+  qrCode,
+  stickers = []
 }) => {
   // Default aspect ratio for invitation cards (typically 5x7)
   const aspectRatio = "aspect-[5/7]";
@@ -87,6 +101,71 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     }
   };
 
+  // Determine position class for QR code
+  const getQRPositionClass = (position: string) => {
+    switch (position) {
+      case "top-left": return "top-4 left-4";
+      case "top-center": return "top-4 left-1/2 transform -translate-x-1/2";
+      case "top-right": return "top-4 right-4";
+      case "middle-left": return "top-1/2 left-4 transform -translate-y-1/2";
+      case "middle-center": return "top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2";
+      case "middle-right": return "top-1/2 right-4 transform -translate-y-1/2";
+      case "bottom-left": return "bottom-4 left-4";
+      case "bottom-center": return "bottom-4 left-1/2 transform -translate-x-1/2";
+      case "bottom-right": return "bottom-4 right-4";
+      default: return "bottom-4 right-4";
+    }
+  };
+
+  // Generate a simple QR code placeholder (in a real app, use a proper QR code library)
+  const renderQRCode = () => {
+    if (!qrCode) return null;
+    
+    return (
+      <div className={`absolute ${getQRPositionClass(qrCode.position)} w-16 h-16 bg-white p-1 rounded shadow-md z-30 border-2 border-gray-200`}>
+        <div className="w-full h-full bg-white relative overflow-hidden">
+          {/* Simple visual representation of a QR code */}
+          <div className="grid grid-cols-4 grid-rows-4 w-full h-full">
+            {Array(16).fill(0).map((_, i) => (
+              <div 
+                key={i} 
+                className={`
+                  ${Math.random() > 0.6 ? 'bg-black' : 'bg-white'} 
+                  ${i === 0 || i === 3 || i === 12 || i === 15 ? 'bg-black' : ''}
+                `}
+              ></div>
+            ))}
+          </div>
+          {/* QR code type indicator */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-20">
+            {qrCode.type === "url" && <span>🌐</span>}
+            {qrCode.type === "location" && <span>📍</span>}
+            {qrCode.type === "event" && <span>📅</span>}
+            {qrCode.type === "email" && <span>📧</span>}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Render stickers
+  const renderStickers = () => {
+    if (!stickers.length) return null;
+    
+    return stickers.map((sticker, index) => (
+      <div 
+        key={index} 
+        className="absolute z-30 text-3xl transform -translate-x-1/2 -translate-y-1/2 hover:scale-110 transition-transform cursor-move"
+        style={{ 
+          top: `${sticker.position.y}%`,
+          left: `${sticker.position.x}%`,
+        }}
+      >
+        {sticker.emoji}
+      </div>
+    ));
+  };
+
   // Determine if we need to show the template background image
   const showTemplateBackground = template?.previewUrl && !backgroundImage;
 
@@ -150,6 +229,12 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
             {message || "Enter your invitation details here. Include event information such as date, time, and location."}
           </p>
         </div>
+        
+        {/* QR Code */}
+        {renderQRCode()}
+        
+        {/* Stickers/Emojis */}
+        {renderStickers()}
       </div>
     </div>
   );
