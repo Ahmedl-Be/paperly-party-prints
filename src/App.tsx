@@ -15,13 +15,20 @@ import NotFound from "./pages/NotFound";
 
 const App = () => {
   // Initialize QueryClient correctly - create a new instance directly
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        retry: 1
+      },
+    },
+  });
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Sonner position="bottom-right" />
+        <Sonner position="bottom-right" richColors />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />

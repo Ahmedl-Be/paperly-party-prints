@@ -23,6 +23,31 @@ const EditorActions: React.FC<EditorActionsProps> = ({
   canUndo = false,
   canRedo = false
 }) => {
+  const handleSave = () => {
+    // Show a loading state for a brief moment to give feedback
+    toast.promise(
+      new Promise((resolve) => setTimeout(resolve, 800)),
+      {
+        loading: 'Saving your design...',
+        success: () => {
+          onSave();
+          return 'Design saved successfully!';
+        },
+        error: 'Failed to save design',
+      }
+    );
+  };
+
+  const handleDownload = () => {
+    toast.info("Preparing your download...");
+    onDownload();
+  };
+
+  const handleShare = () => {
+    toast.info("Preparing sharing options...");
+    onShare();
+  };
+
   return (
     <div className="mt-4">
       {/* Undo/Redo row */}
@@ -58,24 +83,24 @@ const EditorActions: React.FC<EditorActionsProps> = ({
       {/* Main action buttons */}
       <div className="flex flex-wrap md:flex-nowrap gap-2">
         <Button 
-          onClick={onSave} 
-          className="flex-1 flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 transition-colors shadow-md hover:shadow-lg"
+          onClick={handleSave} 
+          className="flex-1 flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 transition-colors shadow-md hover:shadow-lg hover:scale-[1.02] duration-200"
         >
           <Save className="h-4 w-4" />
           <span>Save</span>
         </Button>
         <Button 
-          onClick={onDownload} 
+          onClick={handleDownload} 
           variant="outline" 
-          className="flex-1 flex items-center justify-center space-x-2 border-purple-200 hover:bg-purple-50 transition-all hover:scale-[1.02]"
+          className="flex-1 flex items-center justify-center space-x-2 border-purple-200 hover:bg-purple-50 transition-all hover:scale-[1.02] hover:shadow-sm"
         >
           <Download className="h-4 w-4" />
           <span>Download</span>
         </Button>
         <Button 
-          onClick={onShare} 
+          onClick={handleShare} 
           variant="outline" 
-          className="flex-1 flex items-center justify-center space-x-2 border-purple-200 hover:bg-purple-50 transition-all hover:scale-[1.02]"
+          className="flex-1 flex items-center justify-center space-x-2 border-purple-200 hover:bg-purple-50 transition-all hover:scale-[1.02] hover:shadow-sm"
         >
           <Share className="h-4 w-4" />
           <span>Share</span>
@@ -84,7 +109,7 @@ const EditorActions: React.FC<EditorActionsProps> = ({
       
       {/* Progress indicator */}
       <div className="mt-3 bg-gray-100 h-1.5 rounded-full overflow-hidden">
-        <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-full w-1/2" title="Design progress"></div>
+        <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-full w-1/2 animate-pulse" title="Design progress"></div>
       </div>
       <p className="text-xs text-center mt-1 text-gray-500">Design progress: 50% complete</p>
     </div>
