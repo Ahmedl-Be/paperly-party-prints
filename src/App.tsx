@@ -14,7 +14,8 @@ import Auth from "./pages/Auth";
 import Search from "./pages/Search";
 import NotFound from "./pages/NotFound";
 import WorkInProgress from "./components/editor/WorkInProgress";
-import { QrCode, Smile, Search as SearchIcon } from "lucide-react";
+import AiCreator from "./pages/AiCreator";
+import { QrCode, Smile, Search as SearchIcon, Wand } from "lucide-react";
 
 const App = () => {
   // Initialize QueryClient correctly - create a new instance directly
@@ -41,6 +42,7 @@ const App = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/ai-creator" element={<AiCreator />} />
             
             {/* Work in Progress pages */}
             <Route 

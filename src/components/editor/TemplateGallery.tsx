@@ -212,9 +212,15 @@ const categories = [
 
 interface TemplateGalleryProps {
   onSelectTemplate: (template: Template) => void;
+  currentPage?: number;
+  itemsPerPage?: number;
 }
 
-const TemplateGallery: React.FC<TemplateGalleryProps> = ({ onSelectTemplate }) => {
+const TemplateGallery: React.FC<TemplateGalleryProps> = ({ 
+  onSelectTemplate,
+  currentPage = 1,
+  itemsPerPage = 9
+}) => {
   return (
     <div>
       <Tabs defaultValue="all">
@@ -236,6 +242,8 @@ const TemplateGallery: React.FC<TemplateGalleryProps> = ({ onSelectTemplate }) =
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {templates
                   .filter(t => category.id === "all" || t.category === category.id)
+                  // Apply pagination
+                  .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
                   .map((template) => (
                     <div 
                       key={template.id}

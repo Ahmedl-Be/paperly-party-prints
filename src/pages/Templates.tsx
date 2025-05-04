@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,11 +10,21 @@ import TemplateGallery from "@/components/editor/TemplateGallery";
 import { toast } from "@/components/ui/sonner";
 import type { Template } from "@/pages/CardEditor";
 import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from "@/components/ui/pagination";
 
 const Templates = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [featuredTemplate, setFeaturedTemplate] = useState<Template | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
   
   // Sample featured template
   useEffect(() => {
@@ -45,6 +54,15 @@ const Templates = () => {
     // In production this would filter templates
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top when changing pages
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Total number of pages (would normally be calculated based on API results)
+  const totalPages = 3;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -60,9 +78,9 @@ const Templates = () => {
               Browse hundreds of professionally designed templates for any occasion
             </p>
             
-            {/* Search Bar */}
+            {/* Search Bar - Fixed alignment */}
             <form onSubmit={handleSearch} className="relative max-w-lg mx-auto">
-              <div className="flex">
+              <div className="flex justify-center">
                 <div className="relative flex-grow">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                   <Input
@@ -178,30 +196,46 @@ const Templates = () => {
             
             <Card className="shadow-sm">
               <CardContent className="p-0">
-                {/* Using the existing TemplateGallery component */}
-                <TemplateGallery onSelectTemplate={handleTemplateSelect} />
+                {/* Using the existing TemplateGallery component with pagination props */}
+                <TemplateGallery 
+                  onSelectTemplate={handleTemplateSelect} 
+                  currentPage={currentPage}
+                  itemsPerPage={itemsPerPage}
+                />
               </CardContent>
             </Card>
             
-            {/* Pagination */}
+            {/* Functional Pagination */}
             <div className="flex justify-center mt-8">
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" disabled>
-                  Previous
-                </Button>
-                <Button variant="outline" size="sm" className="bg-purple-100">
-                  1
-                </Button>
-                <Button variant="outline" size="sm">
-                  2
-                </Button>
-                <Button variant="outline" size="sm">
-                  3
-                </Button>
-                <Button variant="outline" size="sm">
-                  Next
-                </Button>
-              </div>
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                  
+                  {[...Array(totalPages)].map((_, index) => (
+                    <PaginationItem key={index + 1}>
+                      <PaginationLink 
+                        isActive={currentPage === index + 1}
+                        onClick={() => handlePageChange(index + 1)}
+                        className="cursor-pointer"
+                      >
+                        {index + 1}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           </div>
         </div>
@@ -277,6 +311,34 @@ const Templates = () => {
           <Button asChild size="lg" variant="secondary" className="animate-pulse-slow">
             <Link to="/create">Start from Scratch</Link>
           </Button>
+        </div>
+      </section>
+      
+      {/* AI Template Creator */}
+      <section className="py-16 bg-gradient-to-b from-white to-purple-50">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-block bg-purple-100 px-4 py-1.5 rounded-full text-purple-800 font-medium text-sm mb-6 animate-pulse">
+              ✨ NEW FEATURE
+            </div>
+            <h2 className="text-3xl font-bold mb-4">
+              AI Template <span className="text-purple-600">Creator</span>
+            </h2>
+            <p className="text-lg text-gray-600 mb-8">
+              Let our AI assistant help you create the perfect template tailored to your specific needs
+            </p>
+            
+            <Button 
+              asChild 
+              size="lg" 
+              className="bg-purple-600 hover:bg-purple-700 transition-all shadow-md group"
+            >
+              <Link to="/ai-creator" className="flex items-center">
+                Create with AI
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
     </div>
