@@ -1,3 +1,4 @@
+
 import React from "react";
 import type { Template } from "@/pages/CardEditor";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -8,7 +9,7 @@ const templates: Template[] = [
   {
     id: "wedding-1",
     name: "Elegant Wedding",
-    previewUrl: "",
+    previewUrl: "https://images.unsplash.com/photo-1500673922987-e212871fec22",
     category: "wedding",
     backgroundColor: "#F9F5FF",
     textColor: "#7E69AB",
@@ -20,7 +21,7 @@ const templates: Template[] = [
   {
     id: "wedding-2",
     name: "Rustic Wedding",
-    previewUrl: "",
+    previewUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
     category: "wedding",
     backgroundColor: "#FEF7CD",
     textColor: "#816B56",
@@ -32,7 +33,7 @@ const templates: Template[] = [
   {
     id: "wedding-3",
     name: "Love Story",
-    previewUrl: "",
+    previewUrl: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
     category: "wedding",
     backgroundColor: "#FFDEE2",
     textColor: "#C42847",
@@ -44,7 +45,7 @@ const templates: Template[] = [
   {
     id: "birthday-1",
     name: "Birthday Bash",
-    previewUrl: "",
+    previewUrl: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
     category: "birthday",
     backgroundColor: "#FEF7CD",
     textColor: "#000000",
@@ -56,7 +57,7 @@ const templates: Template[] = [
   {
     id: "birthday-2",
     name: "Elegant Birthday",
-    previewUrl: "",
+    previewUrl: "https://images.unsplash.com/photo-1500673922987-e212871fec22",
     category: "birthday",
     backgroundColor: "#E5DEFF",
     textColor: "#4C3889",
@@ -68,7 +69,7 @@ const templates: Template[] = [
   {
     id: "birthday-3",
     name: "Party Time",
-    previewUrl: "",
+    previewUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
     category: "birthday",
     backgroundColor: "#D3E4FD",
     textColor: "#2B5998",
@@ -104,7 +105,7 @@ const templates: Template[] = [
   {
     id: "baby-1",
     name: "Baby Shower",
-    previewUrl: "",
+    previewUrl: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
     category: "baby",
     backgroundColor: "#D3E4FD",
     textColor: "#333333",
@@ -116,7 +117,7 @@ const templates: Template[] = [
   {
     id: "baby-2",
     name: "Baby Sprinkle",
-    previewUrl: "",
+    previewUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
     category: "baby",
     backgroundColor: "#FFDEE2",
     textColor: "#8E4155",
@@ -152,7 +153,7 @@ const templates: Template[] = [
   {
     id: "holiday-1",
     name: "Holiday Party",
-    previewUrl: "",
+    previewUrl: "https://images.unsplash.com/photo-1500673922987-e212871fec22",
     category: "holiday",
     backgroundColor: "#FFDEE2",
     textColor: "#333333",
@@ -164,7 +165,7 @@ const templates: Template[] = [
   {
     id: "holiday-2",
     name: "New Year's Eve",
-    previewUrl: "",
+    previewUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
     category: "holiday",
     backgroundColor: "#E5DEFF",
     textColor: "#333333",
@@ -176,7 +177,7 @@ const templates: Template[] = [
   {
     id: "valentines-1",
     name: "Love Note",
-    previewUrl: "",
+    previewUrl: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
     category: "holiday",
     backgroundColor: "#FFCCD5",
     textColor: "#D81E5B",
@@ -239,26 +240,35 @@ const TemplateGallery: React.FC<TemplateGalleryProps> = ({ onSelectTemplate }) =
                     <div 
                       key={template.id}
                       onClick={() => onSelectTemplate(template)}
-                      className="cursor-pointer border rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-purple-300 group"
+                      className="cursor-pointer border rounded-lg overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-purple-300 group perspective"
                     >
-                      {/* Template preview */}
-                      <div 
-                        className="aspect-[5/7] p-5 flex flex-col items-center justify-center"
-                        style={{ 
-                          backgroundColor: template.backgroundColor,
-                          color: template.textColor
-                        }}
-                      >
-                        <div className="text-center">
-                          <h4 className="text-sm font-semibold mb-2">{template.defaultText.title}</h4>
-                          <p className="text-xs mt-1 line-clamp-4 opacity-90">{template.defaultText.message}</p>
+                      {/* Template preview with 3D hover effect */}
+                      <div className="transform transition-transform duration-500 hover:rotate-y-2 hover:rotate-x-2">
+                        <div 
+                          className="aspect-[5/7] p-5 flex flex-col items-center justify-center relative overflow-hidden"
+                          style={{ 
+                            backgroundColor: template.backgroundColor,
+                            color: template.textColor
+                          }}
+                        >
+                          {template.previewUrl && (
+                            <div 
+                              className="absolute inset-0 bg-cover bg-center z-0 opacity-15"
+                              style={{ backgroundImage: `url(${template.previewUrl})` }}
+                            ></div>
+                          )}
+                          <div className="text-center relative z-10">
+                            <h4 className="text-sm font-semibold mb-2">{template.defaultText.title}</h4>
+                            <p className="text-xs mt-1 line-clamp-4 opacity-90">{template.defaultText.message}</p>
+                          </div>
                         </div>
                       </div>
                       
-                      {/* Template name */}
-                      <div className="bg-white p-3 text-center border-t">
+                      {/* Template name with shimmer effect on hover */}
+                      <div className="bg-white p-3 text-center border-t relative overflow-hidden">
                         <p className="text-sm font-medium group-hover:text-purple-700 transition-colors">{template.name}</p>
                         <p className="text-xs text-gray-500 capitalize">{template.category}</p>
+                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/60 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                       </div>
                     </div>
                   ))

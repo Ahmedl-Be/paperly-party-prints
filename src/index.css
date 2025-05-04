@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -98,4 +99,65 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* 3D template card effects */
+.perspective {
+  perspective: 1000px;
+}
+
+.transform {
+  transform-style: preserve-3d;
+}
+
+/* Animated shimmer effect */
+@keyframes shimmer {
+  0% { background-position: -100% 0; }
+  100% { background-position: 100% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.3), rgba(255,255,255,0));
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Add a pulse animation */
+@keyframes pulse-slow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+/* Smoother hover transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Gradients for text and buttons */
+.gradient-text {
+  @apply bg-gradient-to-r from-purple-600 to-pink-500 text-transparent bg-clip-text;
+}
+
+.gradient-bg {
+  @apply bg-gradient-to-r from-purple-500 to-pink-500;
+}
+
+.rotate-y-2 {
+  transform: rotateY(2deg);
+}
+
+.rotate-x-2 {
+  transform: rotateX(2deg);
 }

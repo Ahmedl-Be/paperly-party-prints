@@ -87,15 +87,29 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     }
   };
 
+  // Determine if we need to show the template background image
+  const showTemplateBackground = template?.previewUrl && !backgroundImage;
+
   return (
     <div className="w-full flex justify-center">
       <div 
-        className={`${aspectRatio} w-full max-w-md shadow-lg rounded-md overflow-hidden border border-gray-200 flex flex-col transition-all duration-300 relative`}
+        className={`${aspectRatio} w-full max-w-md shadow-xl rounded-md overflow-hidden border border-gray-200 flex flex-col transition-all duration-300 relative transform hover:scale-[1.01] hover:shadow-2xl`}
         style={{ 
           backgroundColor: backgroundColor,
         }}
       >
-        {/* Background image if available */}
+        {/* Template background image if available and no custom background uploaded */}
+        {showTemplateBackground && (
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
+            style={{
+              backgroundImage: `url(${template.previewUrl})`,
+              opacity: 0.15
+            }}
+          ></div>
+        )}
+        
+        {/* User uploaded background image if available */}
         {backgroundImage && (
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
@@ -106,7 +120,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
         )}
         
         {/* Color overlay for background image */}
-        {backgroundImage && (
+        {(backgroundImage || showTemplateBackground) && (
           <div 
             className="absolute inset-0 z-10"
             style={{ 
@@ -117,11 +131,11 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
         )}
         
         {/* Background patterns and decorative elements */}
-        <div className={backgroundImage ? "z-20" : ""}>
+        <div className={backgroundImage || showTemplateBackground ? "z-20" : ""}>
           {getDecorativeElements()}
         </div>
         
-        <div className={`flex flex-col items-center justify-center text-center p-8 h-full relative ${backgroundImage ? "z-20" : ""}`}>
+        <div className={`flex flex-col items-center justify-center text-center p-8 h-full relative ${backgroundImage || showTemplateBackground ? "z-20" : ""}`}>
           <h2 
             className="text-3xl md:text-4xl font-bold mb-6 transition-all"
             style={{ color: textColor }}

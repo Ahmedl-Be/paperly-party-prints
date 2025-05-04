@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "@/components/ui/sonner";
 import EditorCanvas from "@/components/editor/EditorCanvas";
@@ -22,6 +22,16 @@ export interface Template {
   };
 }
 
+// History state for undo/redo functionality
+interface HistoryState {
+  title: string;
+  message: string;
+  backgroundColor: string;
+  textColor: string;
+  backgroundImage: string | null;
+  overlayOpacity: number;
+}
+
 const CardEditor = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [title, setTitle] = useState("");
@@ -31,8 +41,65 @@ const CardEditor = () => {
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [overlayOpacity, setOverlayOpacity] = useState(0.3);
   
+  // History states for undo/redo functionality
+  const [history, setHistory] = useState<HistoryState[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [isUndoRedoAction, setIsUndoRedoAction] = useState(false);
+  
   // Reference for the canvas to download
   const canvasRef = useState<HTMLDivElement | null>(null);
+
+  // Load saved state from localStorage on initial render
+  useEffect(() => {
+    try {
+      const savedInvitation = localStorage.getItem('saved-invitation');
+      if (savedInvitation) {
+        const savedState = JSON.parse(savedInvitation);
+        if (savedState.title) setTitle(savedState.title);
+        if (savedState.message) setMessage(savedState.message);
+        if (savedState.backgroundColor) setBackgroundColor(savedState.backgroundColor);
+        if (savedState.textColor) setTextColor(savedState.textColor);
+        if (savedState.backgroundImage) setBackgroundImage(savedState.backgroundImage);
+        if (savedState.overlayOpacity !== undefined) setOverlayOpacity(savedState.overlayOpacity);
+        
+        toast.info("Your saved design has been loaded!");
+      }
+    } catch (error) {
+      console.error("Error loading saved design:", error);
+    }
+  }, []);
+
+  // Save to history when any design element changes
+  useEffect(() => {
+    if (!isUndoRedoAction) {
+      const currentState: HistoryState = {
+        title,
+        message,
+        backgroundColor,
+        textColor,
+        backgroundImage,
+        overlayOpacity
+      };
+      
+      // If we're in the middle of the history, truncate it
+      if (historyIndex >= 0 && historyIndex < history.length - 1) {
+        setHistory(prev => [...prev.slice(0, historyIndex + 1), currentState]);
+        setHistoryIndex(historyIndex + 1);
+      } else {
+        // Add to the end of history
+        setHistory(prev => [...prev, currentState]);
+        setHistoryIndex(prev => prev + 1);
+      }
+      
+      // Limit history to 50 steps to prevent memory issues
+      if (history.length > 50) {
+        setHistory(prev => prev.slice(prev.length - 50));
+        setHistoryIndex(49);
+      }
+    } else {
+      setIsUndoRedoAction(false);
+    }
+  }, [title, message, backgroundColor, textColor, backgroundImage, overlayOpacity]);
   
   const handleTemplateSelect = (template: Template) => {
     setSelectedTemplate(template);
@@ -69,7 +136,10 @@ const CardEditor = () => {
     }
     
     toast.promise(
-      html2canvas(cardElement).then(canvas => {
+      html2canvas(cardElement, {
+        scale: 2, // Higher quality output
+        useCORS: true // Needed for images from other domains
+      }).then(canvas => {
         // Create download link
         const link = document.createElement('a');
         link.download = `${title || 'invitation'}.png`;
@@ -87,35 +157,94 @@ const CardEditor = () => {
   const handleShare = () => {
     // Check if Web Share API is supported
     if (navigator.share) {
+      // In a real app, this would generate a shareable link first
+      // For now we'll just share the current page
       navigator.share({
         title: title || 'My Custom Invitation',
         text: 'Check out this invitation I created!',
-        // In a real app, this would be a link to a shared version of the card
         url: window.location.href
       })
         .then(() => toast.success("Shared successfully!"))
-        .catch(() => toast.error("Sharing canceled"));
+        .catch((error) => {
+          if (error.name !== 'AbortError') {
+            toast.error("Sharing failed");
+          }
+        });
     } else {
       // Fallback for browsers that don't support the Web Share API
-      // Create a shareable link (in a real app, this would generate a unique URL)
       navigator.clipboard.writeText(window.location.href)
         .then(() => toast.success("Link copied to clipboard! Now you can share it."))
         .catch(() => toast.error("Could not copy link. Please try again."));
     }
   };
+  
+  const handleUndo = () => {
+    if (historyIndex > 0) {
+      setIsUndoRedoAction(true);
+      const prevState = history[historyIndex - 1];
+      setTitle(prevState.title);
+      setMessage(prevState.message);
+      setBackgroundColor(prevState.backgroundColor);
+      setTextColor(prevState.textColor);
+      setBackgroundImage(prevState.backgroundImage);
+      setOverlayOpacity(prevState.overlayOpacity);
+      setHistoryIndex(historyIndex - 1);
+      toast.info("Undo successful");
+    } else {
+      toast.info("Nothing to undo");
+    }
+  };
+  
+  const handleRedo = () => {
+    if (historyIndex < history.length - 1) {
+      setIsUndoRedoAction(true);
+      const nextState = history[historyIndex + 1];
+      setTitle(nextState.title);
+      setMessage(nextState.message);
+      setBackgroundColor(nextState.backgroundColor);
+      setTextColor(nextState.textColor);
+      setBackgroundImage(nextState.backgroundImage);
+      setOverlayOpacity(nextState.overlayOpacity);
+      setHistoryIndex(historyIndex + 1);
+      toast.info("Redo successful");
+    } else {
+      toast.info("Nothing to redo");
+    }
+  };
+
+  // Auto-save draft on changes
+  useEffect(() => {
+    const autosaveTimeout = setTimeout(() => {
+      if (title || message) {
+        const draftDesign = {
+          template: selectedTemplate?.id || null,
+          title,
+          message,
+          backgroundColor,
+          textColor,
+          backgroundImage,
+          overlayOpacity
+        };
+        localStorage.setItem('draft-invitation', JSON.stringify(draftDesign));
+        console.log('Auto-saved draft');
+      }
+    }, 5000); // Save after 5 seconds of inactivity
+    
+    return () => clearTimeout(autosaveTimeout);
+  }, [title, message, backgroundColor, textColor, backgroundImage, overlayOpacity, selectedTemplate]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
       <Header />
       
       <div className="container mx-auto px-4 py-6">
-        <h1 className="text-3xl font-bold mb-2">Design Your Invitation</h1>
+        <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-pink-500 text-transparent bg-clip-text">Design Your Invitation</h1>
         <p className="text-gray-600 mb-6">Customize your perfect invitation with our easy-to-use editor</p>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Editor Canvas - Preview Area */}
           <div className="lg:col-span-2">
-            <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
+            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300 border-purple-100">
               <CardContent className="p-6">
                 <div className="card-canvas">
                   <EditorCanvas
@@ -136,6 +265,10 @@ const CardEditor = () => {
               onSave={handleSave}
               onDownload={handleDownload}
               onShare={handleShare}
+              onUndo={handleUndo}
+              onRedo={handleRedo}
+              canUndo={historyIndex > 0}
+              canRedo={historyIndex < history.length - 1}
             />
           </div>
           
