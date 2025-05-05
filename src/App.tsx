@@ -15,6 +15,7 @@ import Search from "./pages/Search";
 import NotFound from "./pages/NotFound";
 import WorkInProgress from "./components/editor/WorkInProgress";
 import AiCreator from "./pages/AiCreator";
+import CustomStyles from "./components/layout/CustomStyles";
 import { QrCode, Smile, Search as SearchIcon, Wand, WandSparkles } from "lucide-react";
 
 // Add Google Fonts
@@ -36,6 +37,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <style dangerouslySetInnerHTML={{ __html: fontStyles }} />
+      <CustomStyles />
       <TooltipProvider>
         <Toaster />
         <Sonner position="bottom-right" richColors />
