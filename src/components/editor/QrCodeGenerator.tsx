@@ -14,22 +14,58 @@ interface QrCodeGeneratorProps {
 const QrCodeGenerator: React.FC<QrCodeGeneratorProps> = ({ onGenerate }) => {
   const [qrType, setQrType] = useState<string>("url");
   const [qrPosition, setQrPosition] = useState<string>("bottom-right");
-  const [qrData, setQrData] = useState<string>("");
+  const [qrData, setQrData] = useState<string>("https://cardcrafter.com");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // Helper function to validate URL
+  const isValidUrl = (urlString: string): boolean => {
+    try {
+      new URL(urlString);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
 
   const handleGenerateQR = () => {
     if (!qrData) {
       toast.error("Please enter data for the QR code");
       return;
     }
+
+    // Validate URL format for URL type QR codes
+    if (qrType === "url" && !isValidUrl(qrData)) {
+      toast.error("Please enter a valid URL (e.g., https://example.com)");
+      return;
+    }
+    
+    // Format data based on type to ensure it's scannable
+    let formattedData = qrData;
+    
+    switch (qrType) {
+      case "url":
+        // URL format is already validated above
+        break;
+      case "location":
+        // Format for geo: URI or Google Maps
+        formattedData = `https://maps.google.com/?q=${encodeURIComponent(qrData)}`;
+        break;
+      case "event":
+        // Simple format that most QR readers can understand
+        formattedData = `EVENT:${encodeURIComponent(qrData)}`;
+        break;
+      case "email":
+        // Format as mailto: link
+        formattedData = `mailto:${encodeURIComponent(qrData)}`;
+        break;
+    }
     
     setIsLoading(true);
     
-    // In a real app, we might have more validation here
     setTimeout(() => {
-      onGenerate(qrData, qrType, qrPosition);
+      onGenerate(formattedData, qrType, qrPosition);
       setIsLoading(false);
-      toast.success("QR code added to your invitation!");
+      toast.success("Scannable QR code added to your invitation!");
     }, 800);
   };
   
@@ -105,6 +141,11 @@ const QrCodeGenerator: React.FC<QrCodeGeneratorProps> = ({ onGenerate }) => {
             className="rounded-l-none focus-visible:ring-purple-500"
           />
         </div>
+        <p className="text-xs text-gray-500 mt-1">
+          {qrType === 'url' && 'Enter a valid URL that starts with http:// or https://'}
+          {qrType === 'location' && 'Enter an address to open in maps app'}
+          {qrType === 'email' && 'Enter an email address for RSVP'}
+        </p>
       </div>
       
       <div>
@@ -149,7 +190,7 @@ const QrCodeGenerator: React.FC<QrCodeGeneratorProps> = ({ onGenerate }) => {
         className="w-full bg-purple-600 hover:bg-purple-700"
         disabled={isLoading}
       >
-        {isLoading ? "Generating..." : "Add QR Code to Invitation"}
+        {isLoading ? "Generating..." : "Add Scannable QR Code to Invitation"}
       </Button>
     </div>
   );

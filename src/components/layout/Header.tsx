@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, X, Search, Sparkles } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,9 +12,7 @@ const Header: React.FC = () => {
 
   const menuItems = [
     { name: "Home", path: "/" },
-    { name: "Templates", path: "/templates" },
     { name: "Create", path: "/create" },
-    { name: "Pricing", path: "/pricing" },
     { name: "Contact", path: "/contact" }
   ];
 
@@ -48,27 +46,6 @@ const Header: React.FC = () => {
                 {item.name}
               </Link>
             ))}
-            <Link
-              to="/ai-creator"
-              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors flex items-center gap-1 ${
-                isActive("/ai-creator")
-                  ? "bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700"
-                  : "text-gray-700 hover:bg-gray-50 hover:text-purple-600"
-              }`}
-            >
-              AI Creator <Sparkles className="h-3 w-3 text-yellow-500" />
-            </Link>
-            <Link
-              to="/search"
-              className={`p-2 text-sm font-medium rounded-full transition-colors ${
-                isActive("/search")
-                  ? "bg-purple-100 text-purple-700"
-                  : "text-gray-700 hover:bg-gray-50 hover:text-purple-600"
-              }`}
-              aria-label="Search"
-            >
-              <Search className="h-4 w-4" />
-            </Link>
           </nav>
 
           {/* Auth Buttons (Desktop) */}
@@ -113,28 +90,6 @@ const Header: React.FC = () => {
                       {item.name}
                     </Link>
                   ))}
-                  <Link
-                    to="/ai-creator"
-                    className={`px-4 py-2 text-base rounded-md font-medium flex items-center gap-1 ${
-                      isActive("/ai-creator")
-                        ? "bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700"
-                        : "hover:bg-gray-50 hover:text-purple-600"
-                    }`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    AI Creator <Sparkles className="h-3 w-3 text-yellow-500" />
-                  </Link>
-                  <Link
-                    to="/search"
-                    className={`px-4 py-2 text-base rounded-md flex items-center gap-2 font-medium ${
-                      isActive("/search")
-                        ? "bg-purple-100 text-purple-700"
-                        : "hover:bg-gray-50 hover:text-purple-600"
-                    }`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <Search className="h-4 w-4" /> Search
-                  </Link>
                   <div className="pt-4 border-t border-gray-100">
                     <Link
                       to="/auth"

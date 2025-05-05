@@ -6,7 +6,7 @@ import { Sparkles, ArrowRight } from 'lucide-react';
 
 const HeroSection = () => {
   return (
-    <section className="bg-gradient-to-b from-purple-50 to-white py-12 md:py-20">
+    <section className="min-h-[100vh] bg-gradient-to-b from-purple-50 to-white flex items-center">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
@@ -33,8 +33,8 @@ const HeroSection = () => {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="border-purple-200 hover:border-purple-300 hover:bg-purple-50">
-                <Link to="/templates">
-                  Browse Templates
+                <Link to="/contact">
+                  Contact Us
                 </Link>
               </Button>
             </div>
