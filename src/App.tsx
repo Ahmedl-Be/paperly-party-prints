@@ -17,6 +17,11 @@ import WorkInProgress from "./components/editor/WorkInProgress";
 import AiCreator from "./pages/AiCreator";
 import { QrCode, Smile, Search as SearchIcon, Wand, WandSparkles } from "lucide-react";
 
+// Add Google Fonts
+const fontStyles = `
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+`;
+
 const App = () => {
   // Initialize QueryClient correctly - create a new instance directly
   const queryClient = new QueryClient({
@@ -30,6 +35,7 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <style dangerouslySetInnerHTML={{ __html: fontStyles }} />
       <TooltipProvider>
         <Toaster />
         <Sonner position="bottom-right" richColors />

@@ -67,18 +67,18 @@ const Search = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-purple-50/70 to-white">
       <Header />
       
       <div className="container mx-auto px-4 py-6">
-        <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-heading font-bold mb-2 bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
           Search Templates
         </h1>
-        <p className="text-gray-600 mb-6">
+        <p className="text-gray-600 mb-8 font-medium">
           Find the perfect template for your invitation
         </p>
         
-        {/* Fixed search bar container */}
+        {/* Fixed search bar container with improved styling */}
         <div className="relative max-w-2xl mx-auto mb-8">
           <div className="flex w-full items-center">
             <div className="relative flex-grow">
@@ -88,13 +88,13 @@ const Search = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="pl-10 py-6 text-lg shadow-md focus-visible:ring-purple-500 w-full"
+                className="pl-10 py-6 text-lg shadow-sm focus-visible:ring-purple-400 w-full border-gray-200"
               />
             </div>
             <Button 
               onClick={handleSearch}
               disabled={isSearching}
-              className="ml-2 bg-purple-600 hover:bg-purple-700 h-12"
+              className="ml-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 h-12 px-6 font-medium"
             >
               {isSearching ? "Searching..." : "Search"}
             </Button>
@@ -106,17 +106,17 @@ const Search = () => {
             {results.map((template) => (
               <Card 
                 key={template.id} 
-                className="hover:shadow-xl transition-shadow duration-300 cursor-pointer border-purple-100"
+                className="hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer border-purple-100"
                 onClick={() => handleTemplateClick(template.id)}
               >
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">{template.name}</h3>
+                  <h3 className="text-xl font-heading font-semibold mb-2">{template.name}</h3>
                   <p className="text-sm text-gray-500 capitalize mb-3">Category: {template.category}</p>
                   <div className="flex flex-wrap gap-2">
                     {template.tags.map((tag: string) => (
                       <span 
                         key={tag} 
-                        className="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full"
+                        className="inline-block bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 text-xs px-2 py-1 rounded-full font-medium"
                       >
                         {tag}
                       </span>
@@ -131,12 +131,12 @@ const Search = () => {
         {searchQuery && !isSearching && results.length === 0 && (
           <div className="text-center py-12">
             <SearchIcon className="h-16 w-16 mx-auto text-gray-300 mb-4" />
-            <h2 className="text-xl font-medium mb-2">No results found</h2>
+            <h2 className="text-xl font-heading font-medium mb-2">No results found</h2>
             <p className="text-gray-500">Try different keywords or browse our templates</p>
             <Button 
               onClick={() => navigate("/templates")} 
               variant="outline" 
-              className="mt-4"
+              className="mt-4 border-purple-200 hover:border-purple-300 hover:bg-purple-50 font-medium"
             >
               Browse All Templates
             </Button>
