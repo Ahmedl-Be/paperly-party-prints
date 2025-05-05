@@ -24,7 +24,7 @@ const testimonials = [
     id: 3,
     name: 'Emma Wilson',
     role: 'Mother of Three',
-    content: 'The birthday invitations I made with CardCrafter were a hit! My kids loved them and their friends' parents asked where I got them.',
+    content: "The birthday invitations I made with CardCrafter were a hit! My kids loved them and their friends' parents asked where I got them.",
     avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop',
     rating: 4
   },
