@@ -3,7 +3,7 @@ import React from 'react';
 
 const CustomStyles = () => {
   return (
-    <style jsx global>{`
+    <style dangerouslySetInnerHTML={{ __html: `
       @keyframes float {
         0% {
           transform: translateY(0px);
@@ -55,7 +55,7 @@ const CustomStyles = () => {
       .perspective {
         perspective: 2000px;
       }
-    `}</style>
+    `}} />
   );
 };
 
