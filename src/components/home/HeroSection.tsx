@@ -2,27 +2,29 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
+import { ArrowRight, CheckCircle, FileText, Sparkles, Calendar, Image, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const HeroSection = () => {
   return (
-    <section className="min-h-[100vh] flex items-center bg-gradient-to-b from-purple-50 via-white to-white overflow-hidden relative">
-      {/* Background decorative elements */}
-      <div className="absolute top-20 right-20 w-64 h-64 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-      <div className="absolute top-40 -left-20 w-72 h-72 bg-pink-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-      <div className="absolute bottom-20 right-40 w-80 h-80 bg-yellow-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+    <section className="relative min-h-[90vh] flex items-center bg-gradient-to-b from-indigo-50 via-purple-50 to-white overflow-hidden py-16">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-40 left-10 w-72 h-72 bg-indigo-100 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob animation-delay-4000"></div>
+        <div className="absolute top-0 right-20 w-72 h-72 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        <div className="absolute -bottom-20 left-20 w-72 h-72 bg-pink-100 rounded-full mix-blend-multiply filter blur-xl opacity-60 animate-blob animation-delay-2000"></div>
+      </div>
       
       <div className="container mx-auto px-4 z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="order-2 lg:order-1 space-y-6">
             <motion.div 
               initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ duration: 0.5 }}
               className="inline-flex items-center gap-2 px-3 py-1 bg-purple-100 rounded-full text-purple-700 text-sm font-medium mb-2"
             >
-              <Sparkles className="h-3.5 w-3.5" /> New AI Template Creator
+              <Sparkles className="h-3.5 w-3.5" /> New Smart Templates
             </motion.div>
             
             <motion.h1 
@@ -31,9 +33,9 @@ const HeroSection = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
             >
-              Design Beautiful
-              <span className="block bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
-                Custom Invitations
+              Create Stunning 
+              <span className="block bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
+                Digital Stationery
               </span>
             </motion.h1>
             
@@ -41,75 +43,126 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="text-lg text-gray-600 max-w-xl mx-auto lg:mx-0"
+              className="text-lg text-gray-600 max-w-xl"
             >
-              Create stunning invitations for any occasion with our easy-to-use design tools and professionally crafted templates.
+              CardCrafter makes it easy to design beautiful invitations, cards, and digital stationery for any occasion with professionally crafted templates and intuitive tools.
             </motion.p>
             
-            {/* Feature list */}
             <motion.div 
               initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-left mt-6"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2"
             >
-              {[
-                'AI-Powered Design Assistance',
-                'Customizable Templates',
-                'Print or Digital Options',
-                'QR Code Integration'
-              ].map((feature, i) => (
-                <div key={i} className="flex items-center gap-2">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
                   <CheckCircle className="text-green-500 h-5 w-5 flex-shrink-0" />
-                  <span className="text-sm text-gray-700">{feature}</span>
+                  <span className="text-sm text-gray-700">Smart AI Design Assistant</span>
                 </div>
-              ))}
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="text-green-500 h-5 w-5 flex-shrink-0" />
+                  <span className="text-sm text-gray-700">Premium Templates</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="text-green-500 h-5 w-5 flex-shrink-0" />
+                  <span className="text-sm text-gray-700">Digital & Print Options</span>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="text-green-500 h-5 w-5 flex-shrink-0" />
+                  <span className="text-sm text-gray-700">Interactive Elements</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="text-green-500 h-5 w-5 flex-shrink-0" />
+                  <span className="text-sm text-gray-700">Shareable Links</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="text-green-500 h-5 w-5 flex-shrink-0" />
+                  <span className="text-sm text-gray-700">Custom Branding</span>
+                </div>
+              </div>
             </motion.div>
             
             <motion.div 
               initial={{ opacity: 0, y: 20 }} 
               animate={{ opacity: 1, y: 0 }} 
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4"
+              className="flex flex-col sm:flex-row gap-4 pt-4"
             >
-              <Button asChild size="lg" className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-md group">
-                <Link to="/create" className="flex items-center">
-                  Start Creating
+              <Button asChild size="lg" className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-md group">
+                <Link to="/templates" className="flex items-center">
+                  Get Started Free
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="border-purple-200 hover:border-purple-300 hover:bg-purple-50">
-                <Link to="/contact">
-                  Contact Us
+                <Link to="/templates" className="flex items-center">
+                  Browse Templates
                 </Link>
               </Button>
             </motion.div>
           </div>
           
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.8 }} 
-            animate={{ opacity: 1, scale: 1 }} 
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-6 perspective"
-          >
-            <div className="relative">
-              {/* Main card */}
-              <div className="w-3/4 mx-auto aspect-[5/7] bg-white rounded-xl shadow-2xl border-8 border-white transform transition-all duration-500 hover:-rotate-y-2 hover:rotate-x-2 hover:shadow-purple-200/30 overflow-hidden group">
-                <div className="h-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center p-8 text-white transition-all duration-500 group-hover:scale-105 group-hover:from-purple-600 group-hover:to-pink-600">
-                  <div className="text-center space-y-4">
-                    <h3 className="font-heading text-2xl font-bold">You're Invited!</h3>
-                    <p className="font-serif">Join us for an evening of celebration</p>
-                    <div className="h-px w-16 bg-white/50 mx-auto"></div>
-                    <p className="font-heading text-lg">June 15, 2025</p>
+          <div className="order-1 lg:order-2 perspective">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="relative h-full flex items-center justify-center"
+            >
+              {/* Main grid of cards */}
+              <div className="grid grid-cols-2 gap-4 max-w-lg">
+                {/* Card 1 - Birthday */}
+                <div className="transform transition-all duration-700 hover:scale-105 hover:rotate-2 hover:shadow-xl rounded-xl overflow-hidden shadow-lg border-8 border-white bg-white group">
+                  <div className="bg-gradient-to-br from-pink-500 to-rose-500 h-48 flex items-center justify-center p-4 text-white">
+                    <div className="text-center space-y-1 transition-all duration-500 group-hover:scale-110">
+                      <Calendar className="h-10 w-10 mx-auto mb-2" />
+                      <h3 className="font-heading text-lg font-bold">Birthday</h3>
+                      <p className="text-xs text-white/80">Celebration Cards</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Card 2 - Wedding */}
+                <div className="transform transition-all duration-700 hover:scale-105 hover:rotate-2 hover:shadow-xl rounded-xl overflow-hidden shadow-lg border-8 border-white bg-white group">
+                  <div className="bg-gradient-to-br from-purple-500 to-indigo-500 h-40 flex items-center justify-center p-4 text-white">
+                    <div className="text-center space-y-1 transition-all duration-500 group-hover:scale-110">
+                      <Image className="h-10 w-10 mx-auto mb-2" />
+                      <h3 className="font-heading text-lg font-bold">Wedding</h3>
+                      <p className="text-xs text-white/80">Invitations</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Card 3 - Business */}
+                <div className="transform transition-all duration-700 hover:scale-105 hover:rotate-2 hover:shadow-xl rounded-xl overflow-hidden shadow-lg border-8 border-white bg-white group">
+                  <div className="bg-gradient-to-br from-blue-500 to-cyan-500 h-40 flex items-center justify-center p-4 text-white">
+                    <div className="text-center space-y-1 transition-all duration-500 group-hover:scale-110">
+                      <FileText className="h-10 w-10 mx-auto mb-2" />
+                      <h3 className="font-heading text-lg font-bold">Business</h3>
+                      <p className="text-xs text-white/80">Documents</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Card 4 - Fast Track */}
+                <div className="transform transition-all duration-700 hover:scale-105 hover:-rotate-2 hover:shadow-xl rounded-xl overflow-hidden shadow-lg border-8 border-white bg-white group">
+                  <div className="bg-gradient-to-br from-amber-500 to-orange-500 h-48 flex items-center justify-center p-4 text-white">
+                    <div className="text-center space-y-1 transition-all duration-500 group-hover:scale-110">
+                      <Zap className="h-10 w-10 mx-auto mb-2" />
+                      <h3 className="font-heading text-lg font-bold">Fast Track</h3>
+                      <p className="text-xs text-white/80">AI Templates</p>
+                    </div>
                   </div>
                 </div>
               </div>
               
-              {/* Decorative cards */}
-              <div className="absolute -bottom-8 -left-12 w-2/3 aspect-[5/7] rounded-xl shadow-xl border-8 border-white transform -rotate-12 bg-gradient-to-r from-blue-400 to-cyan-300 z-[-1] transition-all duration-500 group-hover:-rotate-16 group-hover:-translate-x-4"></div>
-              <div className="absolute -top-8 -right-12 w-2/3 aspect-[5/7] rounded-xl shadow-xl border-8 border-white transform rotate-12 bg-gradient-to-r from-amber-300 to-yellow-200 z-[-1] transition-all duration-500 group-hover:rotate-16 group-hover:translate-x-4"></div>
-            </div>
-          </motion.div>
+              {/* Decorative elements */}
+              <div className="absolute -bottom-6 -left-6 w-20 h-20 bg-indigo-100 rounded-full z-[-1] animate-pulse-slow"></div>
+              <div className="absolute -top-6 -right-6 w-20 h-20 bg-pink-100 rounded-full z-[-1] animate-pulse-slow animation-delay-2000"></div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </section>

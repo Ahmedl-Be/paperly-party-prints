@@ -1,23 +1,48 @@
 
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  
   const isActive = (path: string) => location.pathname === path;
 
   const menuItems = [
     { name: "Home", path: "/" },
     { name: "Create", path: "/create" },
+    { name: "Templates", path: "/templates" },
     { name: "Contact", path: "/contact" }
   ];
 
   const handleMenuOpen = (open: boolean) => {
     setIsMenuOpen(open);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
+  const getUserInitials = () => {
+    if (!user) return "U";
+    const email = user.email || "";
+    return email.substring(0, 1).toUpperCase();
   };
 
   return (
@@ -50,16 +75,47 @@ const Header: React.FC = () => {
 
           {/* Auth Buttons (Desktop) */}
           <div className="hidden md:flex items-center space-x-3">
-            <Link to="/auth">
-              <Button variant="outline" size="sm" className="font-medium border-purple-200 hover:border-purple-300 hover:bg-purple-50">
-                Log In
-              </Button>
-            </Link>
-            <Link to="/auth?tab=signup">
-              <Button size="sm" className="font-medium bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-sm">
-                Sign Up
-              </Button>
-            </Link>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-purple-100 text-purple-700">
+                        {getUserInitials()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user.email}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Link to="/auth">
+                  <Button variant="outline" size="sm" className="font-medium border-purple-200 hover:border-purple-300 hover:bg-purple-50">
+                    Log In
+                  </Button>
+                </Link>
+                <Link to="/auth?tab=signup">
+                  <Button size="sm" className="font-medium bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-sm">
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -91,20 +147,41 @@ const Header: React.FC = () => {
                     </Link>
                   ))}
                   <div className="pt-4 border-t border-gray-100">
-                    <Link
-                      to="/auth"
-                      className="block px-4 py-2 mb-2 text-center border rounded-md hover:bg-gray-50 font-medium"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Log In
-                    </Link>
-                    <Link
-                      to="/auth?tab=signup"
-                      className="block px-4 py-2 text-center bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-md hover:from-purple-700 hover:to-purple-800 font-medium"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Sign Up
-                    </Link>
+                    {user ? (
+                      <div className="space-y-3">
+                        <div className="px-4 py-2 flex items-center space-x-3">
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback className="bg-purple-100 text-purple-700">{getUserInitials()}</AvatarFallback>
+                          </Avatar>
+                          <span className="text-sm">{user.email}</span>
+                        </div>
+                        <Button
+                          variant="outline"
+                          onClick={handleSignOut}
+                          className="w-full flex items-center justify-center space-x-2"
+                        >
+                          <LogOut className="h-4 w-4" />
+                          <span>Log Out</span>
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        <Link
+                          to="/auth"
+                          className="block px-4 py-2 mb-2 text-center border rounded-md hover:bg-gray-50 font-medium"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          Log In
+                        </Link>
+                        <Link
+                          to="/auth?tab=signup"
+                          className="block px-4 py-2 text-center bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-md hover:from-purple-700 hover:to-purple-800 font-medium"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          Sign Up
+                        </Link>
+                      </>
+                    )}
                   </div>
                 </nav>
               </SheetContent>

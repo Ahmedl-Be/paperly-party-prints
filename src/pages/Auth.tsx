@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
@@ -13,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Eye, EyeOff, Loader2, Mail, Lock, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Form validation schemas
 const loginSchema = z.object({
@@ -35,6 +35,14 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("signin");
   const [showPassword, setShowPassword] = useState(false);
+  const { signIn, signUp, user } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/templates");
+    }
+  }, [user, navigate]);
 
   // Login form
   const loginForm = useForm<LoginFormValues>({
@@ -68,19 +76,11 @@ const Auth = () => {
     setIsLoading(true);
     
     try {
-      // This is where we'll add the Supabase authentication code
-      console.log("Login values:", values);
-      
-      // Simulating API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // In a real app with Supabase, we would use supabase.auth.signIn
-      localStorage.setItem('user', JSON.stringify({ email: values.email, name: values.email.split('@')[0] }));
-      toast.success("Signed in successfully!");
+      await signIn(values.email, values.password);
       navigate("/templates");
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("Failed to sign in. Please check your credentials.");
+      // Error handling is already handled in the AuthContext
     } finally {
       setIsLoading(false);
     }
@@ -90,47 +90,19 @@ const Auth = () => {
     setIsLoading(true);
     
     try {
-      // This is where we'll add the Supabase authentication code
-      console.log("Signup values:", values);
-      
-      // Simulating API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // In a real app with Supabase, we would use supabase.auth.signUp
-      localStorage.setItem('user', JSON.stringify({ email: values.email, name: values.name }));
-      toast.success("Account created successfully!");
-      navigate("/templates");
+      await signUp(values.email, values.password, values.name);
+      // The user will need to verify their email, so we don't navigate away
     } catch (error) {
       console.error("Signup error:", error);
-      toast.error("Failed to create account. Please try again.");
+      // Error handling is already handled in the AuthContext
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleSocialLogin = async (provider: string) => {
-    setIsLoading(true);
-    
-    try {
-      // This is where we'll add the Supabase social auth code
-      console.log(`Logging in with ${provider}`);
-      
-      // Simulating API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // In a real app with Supabase, we would use supabase.auth.signIn with provider
-      localStorage.setItem('user', JSON.stringify({ 
-        email: `user@${provider.toLowerCase()}.com`, 
-        name: `${provider} User` 
-      }));
-      toast.success(`Signed in with ${provider}!`);
-      navigate("/templates");
-    } catch (error) {
-      console.error(`${provider} login error:`, error);
-      toast.error(`Failed to sign in with ${provider}. Please try again.`);
-    } finally {
-      setIsLoading(false);
-    }
+    // Social login functionality to be implemented
+    toast.error(`${provider} login not implemented yet.`);
   };
 
   return (
