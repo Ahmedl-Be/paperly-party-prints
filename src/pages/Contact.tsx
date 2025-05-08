@@ -11,6 +11,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { supabase } from "@/integrations/supabase/client";
 
 // Form validation schema
 const contactFormSchema = z.object({
@@ -40,11 +41,21 @@ const Contact = () => {
     setIsSubmitting(true);
     
     try {
-      // This is where we'll add the Supabase integration code
-      console.log("Form values to submit:", values);
+      // Insert the form data into the contact_submissions table
+      const { error } = await supabase
+        .from('contact_submissions')
+        .insert([
+          { 
+            name: values.name,
+            email: values.email,
+            subject: values.subject,
+            message: values.message
+          }
+        ]);
       
-      // Simulating API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      if (error) {
+        throw error;
+      }
       
       setSubmitted(true);
       toast.success("Message sent! Our team will get back to you soon.");
